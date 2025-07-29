@@ -360,6 +360,7 @@ typedef struct SPlayerTable
 	char	name[CHARACTER_NAME_MAX_LEN + 1];
 	char	ip[IP_ADDRESS_LENGTH + 1];
 
+	DWORD   kingdom_id;
 	WORD	job;
 	BYTE	voice;
 
