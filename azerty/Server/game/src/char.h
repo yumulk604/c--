@@ -365,6 +365,7 @@ typedef struct character_point
 	int				stamina;
 
 	BYTE			skill_group;
+	DWORD			kingdom_id;
 } CHARACTER_POINT;
 
 typedef struct character_point_instant
@@ -1525,6 +1526,9 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 		void				SetQuestFlag(const std::string& flag, int value);
 
 		void				ConfirmWithMsg(const char* szMsg, int iTimeout, DWORD dwRequestPID);
+
+		DWORD				GetKingdom() const;
+		void				SetKingdom(DWORD dwKingdomID);
 
 	private:
 		DWORD				m_dwQuestNPCVID;

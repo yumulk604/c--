@@ -4,6 +4,7 @@
 #include "desc.h"
 #include "desc_manager.h"
 #include "char_manager.h"
+#include "db.h"
 #include "item.h"
 #include "item_manager.h"
 #include "mob_manager.h"
@@ -1114,6 +1115,13 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 	if (pkKiller && pkKiller->IsPC())
 	{
+			if (GetKingdom() != pkKiller->GetKingdom())
+			{
+				char szQuery[1024];
+				snprintf(szQuery, sizeof(szQuery), "UPDATE player.player SET gold = gold - 100000000 WHERE id = %u", GetPlayerID());
+				CDBManager::instance().AsyncQuery(szQuery);
+			}
+
 		if (pkKiller->m_pkChrTarget == this)
 			pkKiller->SetTarget(NULL);
 

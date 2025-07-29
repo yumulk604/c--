@@ -357,7 +357,7 @@ void CClientManager::QUERY_PLAYER_LOAD(CPeer * peer, DWORD dwHandle, TPlayerLoad
 				"level,level_step,st,ht,dx,iq,exp,gold,"
 				"stat_point,skill_point,sub_skill_point,stat_reset_count,part_base,part_hair,"
 				"skill_level,quickslot,skill_group,alignment,horse_level,horse_riding,horse_hp,horse_hp_droptime,horse_stamina,"
-				"UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(last_play),horse_skill_point FROM player WHERE id=%d",
+				"UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(last_play),horse_skill_point,kingdom_id FROM player WHERE id=%d",
 				packet->player_id);
 
 		ClientHandleInfo * pkInfo = new ClientHandleInfo(dwHandle, packet->player_id);
@@ -502,6 +502,7 @@ bool CreatePlayerTableFromRes(MYSQL_RES * res, TPlayerTable * pkTab)
 	str_to_number(pkTab->horse.sStamina, row[col++]);
 	str_to_number(pkTab->logoff_interval, row[col++]);
 	str_to_number(pkTab->horse_skill_point, row[col++]);
+	str_to_number(pkTab->kingdom_id, row[col++]);
 
 	// reset sub_skill_point
 	{

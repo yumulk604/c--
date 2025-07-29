@@ -5,7 +5,7 @@ $(shell if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi)
 
 CFLAGS = -g -Wall -O2 -m32 -pipe -fexceptions -D_THREAD_SAFE -DNDEBUG -mtune=i686 -fstack-protector-all
 
-INCDIR = -I../../libdevil -I../../libmysql/7.x-5.1.35 -I../../../Extern/include/boost -I../../../Extern/include -I../../liblua/include -I/usr/local/include -L/usr/local/lib/mysql
+INCDIR = -I../../libdevil -I../../libmysql/7.x-5.1.35 -I../../../Extern/include/boost -I../../../Extern/include -I../../liblua/include -I/usr/local/include -L/usr/local/lib/mysql -I/usr/include/c++/11
 LIBDIR = -L../../libdevil -L../../libmysql/7.x-5.1.35 -L../../../Extern/lib -L../../libthecore/lib -L../../libpoly -L../../libsql -L../../libgame/lib -L../../liblua/lib -L/usr/local/lib
 LIBS = -pthread -lm -lmd -lIL -lpng -ltiff -lmng -llcms -ljpeg -lmysqlclient -L/usr/local/lib/mysql -lz -lcryptopp -lthecore -lpoly -llua -llualib -lsql -lgame
 
