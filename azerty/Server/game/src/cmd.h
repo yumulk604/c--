@@ -18,6 +18,10 @@ extern struct command_info cmd_info[];
 extern void interpret_command(LPCHARACTER ch, const char * argument, size_t len);
 extern void interpreter_set_privilege(const char * cmd, int lvl);
 
+ACMD(do_create_kingdom);
+ACMD(do_set_kingdom_entry);
+ACMD(do_place_npc);
+
 enum SCMD_ACTION
 {
 	SCMD_SLAP,

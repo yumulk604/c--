@@ -4145,3 +4145,45 @@ ACMD (do_clear_affect)
 {
 	ch->ClearAffect(true);
 }
+
+ACMD(do_create_kingdom)
+{
+    char arg1[256];
+    one_argument(argument, arg1, sizeof(arg1));
+
+    if (!*arg1)
+    {
+        ch->ChatPacket(CHAT_TYPE_INFO, "Usage: /create_kingdom <kingdom name>");
+        return;
+    }
+
+    db_clientdesc->DBPacket(HEADER_GD_CREATE_KINGDOM, ch->GetDesc()->GetHandle(), arg1, strlen(arg1) + 1);
+}
+
+ACMD(do_set_kingdom_entry)
+{
+    if (!ch->GetKingdom())
+    {
+        ch->ChatPacket(CHAT_TYPE_INFO, "You don't have a kingdom.");
+        return;
+    }
+
+    // TODO: Send packet to DB to update kingdom entry point
+}
+
+ACMD(do_place_npc)
+{
+    char arg1[256], arg2[256];
+    two_arguments(argument, arg1, sizeof(arg1), arg2, sizeof(arg2));
+
+    if (!*arg1 || !*arg2)
+    {
+        ch->ChatPacket(CHAT_TYPE_INFO, "Usage: /place_npc <npc_vnum> <type>");
+        return;
+    }
+
+    DWORD npc_vnum = 0;
+    str_to_number(npc_vnum, arg1);
+
+    // TODO: Send packet to DB to add NPC to kingdom
+}
