@@ -342,6 +342,11 @@ class CClientManager : public CNetBase, public singleton<CClientManager>
 	void		MarriageUpdate(TPacketMarriageUpdate * p);
 	void		MarriageRemove(TPacketMarriageRemove * p);
 
+		void        CreateKingdom(CPeer* peer, DWORD dwHandle, const char* name, DWORD owner_id);
+		void        GetKingdom(CPeer* peer, DWORD dwHandle, DWORD kingdom_id);
+		void        AddKingdomNPC(CPeer* peer, DWORD dwHandle, DWORD kingdom_id, DWORD npc_vnum, int x, int y);
+		void        GetKingdomNPCs(CPeer* peer, DWORD dwHandle, DWORD kingdom_id);
+
 	void		WeddingRequest(TPacketWeddingRequest * p);
 	void		WeddingReady(TPacketWeddingReady * p);
 	void		WeddingEnd(TPacketWeddingEnd * p);
