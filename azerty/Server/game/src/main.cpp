@@ -56,6 +56,7 @@
 #include "login_sim.h"
 #include <boost/bind.hpp>
 #include "limit_time.h"
+#include "kingdom.h"
 
 //#define __FILEMONITOR__
 

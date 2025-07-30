@@ -2218,6 +2218,14 @@ int CInputDB::Analyze(LPDESC d, BYTE bHeader, const char * c_pData)
 		MarriageRemove((TPacketMarriageRemove*) c_pData);
 		break;
 
+		case HEADER_DG_KINGDOM_GET:
+			// TODO: Handle kingdom data
+			break;
+
+		case HEADER_DG_KINGDOM_NPCS_GET:
+			// TODO: Handle kingdom NPC data
+			break;
+
 	case HEADER_DG_WEDDING_REQUEST:
 		WeddingRequest((TPacketWeddingRequest*) c_pData);
 		break;
