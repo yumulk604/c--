@@ -11,6 +11,11 @@ extern std::string g_stLocaleNameColumn;
 
 bool CClientManager::InitializeTables()
 {
+	if (!InitializeKingdomsTable())
+	{
+		sys_err("InitializeKingdomsTable FAILED");
+		return false;
+	}
 	if (!InitializeMobTable())
 	{
 		sys_err("InitializeMobTable FAILED");
@@ -89,6 +94,43 @@ bool CClientManager::InitializeTables()
 	}
 
 	return true;
+}
+
+bool CClientManager::InitializeKingdomsTable()
+{
+    // Create kingdoms table
+    char query[4096];
+    snprintf(query, sizeof(query),
+        "CREATE TABLE IF NOT EXISTS `kingdoms` ("
+        "`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,"
+        "`owner_id` INT(11) UNSIGNED NOT NULL,"
+        "`name` VARCHAR(50) NOT NULL,"
+        "`map_index` INT(11) NOT NULL,"
+        "`x` INT(11) NOT NULL,"
+        "`y` INT(11) NOT NULL,"
+        "`last_tax_date` DATETIME,"
+        "PRIMARY KEY (`id`)"
+        ") ENGINE=InnoDB;");
+    std::auto_ptr<SQLMsg> pMsg_kingdoms(CDBManager::instance().DirectQuery(query));
+
+    // Create kingdom_npcs table
+    snprintf(query, sizeof(query),
+        "CREATE TABLE IF NOT EXISTS `kingdom_npcs` ("
+        "`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,"
+        "`kingdom_id` INT(11) UNSIGNED NOT NULL,"
+        "`npc_vnum` INT(11) UNSIGNED NOT NULL,"
+        "`x` INT(11) NOT NULL,"
+        "`y` INT(11) NOT NULL,"
+        "PRIMARY KEY (`id`)"
+        ") ENGINE=InnoDB;");
+    std::auto_ptr<SQLMsg> pMsg_npcs(CDBManager::instance().DirectQuery(query));
+
+    // Add kingdom_id to player table
+    snprintf(query, sizeof(query),
+        "ALTER TABLE `player` ADD COLUMN `kingdom_id` INT(11) UNSIGNED DEFAULT NULL;");
+    std::auto_ptr<SQLMsg> pMsg_alter(CDBManager::instance().DirectQuery(query));
+
+    return true;
 }
 
 bool CClientManager::InitializeRefineTable()

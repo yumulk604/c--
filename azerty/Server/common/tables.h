@@ -353,6 +353,26 @@ struct	THorseInfo
 	DWORD	dwHorseHealthDropTime;
 };
 
+typedef struct SKingdom
+{
+    DWORD id;
+    DWORD owner_id;
+    char name[50];
+    long map_index;
+    long x;
+    long y;
+    time_t last_tax_date;
+} TKingdom;
+
+typedef struct SKingdomNPC
+{
+    DWORD id;
+    DWORD kingdom_id;
+    DWORD npc_vnum;
+    long x;
+    long y;
+} TKingdomNPC;
+
 typedef struct SPlayerTable
 {
 	DWORD	id;
