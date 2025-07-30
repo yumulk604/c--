@@ -961,6 +961,16 @@ void CHARACTER::SetKingdom(DWORD dwKingdomID)
 	m_points.kingdom_id = dwKingdomID;
 }
 
+DWORD CHARACTER::GetKingdom() const
+{
+	return m_points.kingdom_id;
+}
+
+void CHARACTER::SetKingdom(DWORD dwKingdomID)
+{
+	m_points.kingdom_id = dwKingdomID;
+}
+
 void CHARACTER::Save()
 {
 	if (!m_bSkipSave)

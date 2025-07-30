@@ -5,6 +5,7 @@
 #include "desc_manager.h"
 #include "char_manager.h"
 #include "db.h"
+#include "db.h"
 #include "item.h"
 #include "item_manager.h"
 #include "mob_manager.h"

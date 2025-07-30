@@ -1530,6 +1530,9 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 		DWORD				GetKingdom() const;
 		void				SetKingdom(DWORD dwKingdomID);
 
+		DWORD				GetKingdom() const;
+		void				SetKingdom(DWORD dwKingdomID);
+
 	private:
 		DWORD				m_dwQuestNPCVID;
 		DWORD				m_dwQuestByVnum;
