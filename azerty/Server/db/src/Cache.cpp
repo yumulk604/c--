@@ -144,7 +144,7 @@ void CItemCache::OnFlush()
 //
 CPlayerTableCache::CPlayerTableCache()
 {
-	m_expireTime = MIN(1800, g_iPlayerCacheFlushSeconds);
+	m_expireTime = 5;
 }
 
 CPlayerTableCache::~CPlayerTableCache()
