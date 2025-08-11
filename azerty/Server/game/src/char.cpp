@@ -261,6 +261,7 @@ void CHARACTER::Initialize()
 	m_bSendHorseStaminaGrade = 0;
 
 	m_dwLoginPlayTime = 0;
+	m_dwLastSaveTime = get_dword_time();
 
 	m_pkChrMarried = NULL;
 
@@ -3529,6 +3530,12 @@ void CHARACTER::SetNextStatePulse(int iNextPulse)
 void CHARACTER::UpdateCharacter(DWORD dwPulse)
 {
 	CFSM::Update();
+
+	if (IsPC() && get_dword_time() - m_dwLastSaveTime > 5000)
+	{
+		Save();
+		m_dwLastSaveTime = get_dword_time();
+	}
 }
 
 void CHARACTER::SetShop(LPSHOP pkShop)

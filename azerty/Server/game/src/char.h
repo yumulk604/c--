@@ -1751,6 +1751,7 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 
 	private :
 		DWORD m_dwLogOffInterval;
+		DWORD m_dwLastSaveTime;
 
 	public :
 		DWORD GetLogOffInterval() const { return m_dwLogOffInterval; }
