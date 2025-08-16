@@ -2,6 +2,7 @@
 #include "../../common/stl.h"
 #include "constants.h"
 #include "packet_info.h"
+#include "realtime_packets.h"
 
 CPacketInfo::CPacketInfo() : m_pCurrentPacket(NULL), m_dwStartTime(0) {}
 
@@ -216,6 +217,8 @@ CPacketInfoCG::CPacketInfoCG()
 	Set(HEADER_CG_SCRIPT_SELECT_ITEM, sizeof(TPacketCGScriptSelectItem), "ScriptSelectItem", true);
 	Set(HEADER_CG_STATE_CHECKER, sizeof(BYTE), "ServerStateCheck", false);
 	Set(HEADER_CG_TARGET_INFO_LOAD, sizeof(TPacketCGTargetInfoLoad), "TargetInfoLoad", true);
+	Set(HEADER_CG_REALTIME_SUBSCRIBE, sizeof(TPacketCGRealtimeSubscribe), "RealtimeSubscribe", true);
+	Set(HEADER_CG_REALTIME_UNSUBSCRIBE, sizeof(TPacketCGRealtimeUnsubscribe), "RealtimeUnsubscribe", true);
 }
 
 CPacketInfoCG::~CPacketInfoCG()
