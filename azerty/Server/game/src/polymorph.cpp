@@ -153,13 +153,13 @@ bool CPolymorphUtils::BookUpgrade(LPCHARACTER pChar, LPITEM pItem)
 	return true;
 }
 
+#include "config.h"
 bool CPolymorphUtils::ShouldDropPolymorphBook(LPCHARACTER pkKiller, LPCHARACTER pkVictim)
 {
 	if (!pkKiller || !pkVictim)
 		return false;
 
-	// Check if polymorph drop event is enabled
-	if (!quest::CQuestManager::instance().GetEventFlag(POLYMORPH_DROP_EVENT_FLAG))
+	if (polymorph_drop_pct <= 0)
 		return false;
 
 	// Check minimum level requirement
@@ -191,14 +191,7 @@ DWORD CPolymorphUtils::GetPolymorphBookVnum(LPCHARACTER pkVictim)
 
 int CPolymorphUtils::GetDropPercent(LPCHARACTER pkKiller, LPCHARACTER pkVictim)
 {
-	if (!pkKiller || !pkVictim)
-		return 0;
-
-	int iBasePct = POLYMORPH_DROP_BASE_PCT;
-	
-	// Get event flag multiplier
-	int iEventMultiplier = quest::CQuestManager::instance().GetEventFlag(POLYMORPH_DROP_EVENT_FLAG);
-	if (iEventMultiplier <= 0)
+	if (!pkKiller || !pkVictim || polymorph_drop_pct <= 0)
 		return 0;
 
 	// Level difference bonus/penalty
@@ -230,7 +223,7 @@ int CPolymorphUtils::GetDropPercent(LPCHARACTER pkKiller, LPCHARACTER pkVictim)
 	}
 
 	// Calculate final percentage
-	int iFinalPct = (iBasePct + iLevelBonus + iRankBonus) * iEventMultiplier / 100;
+	int iFinalPct = polymorph_drop_pct * (100 + iLevelBonus + iRankBonus) / 100;
 	
-	return MINMAX(1, iFinalPct, 1000); // Cap between 0.01% and 10%
+	return MINMAX(1, iFinalPct, 10000); // Cap between 0.01% and 100%
 }

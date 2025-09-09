@@ -85,6 +85,7 @@ void		LoadValidCRCList();
 int gPlayerMaxLevel = 99;
 
 bool g_BlockCharCreation = false;
+int polymorph_drop_pct = 0;
 
 bool is_string_true(const char * string)
 {
@@ -754,6 +755,13 @@ void config_init(const string& st_localeServiceName)
 			else
 				g_BlockCharCreation = true;
 
+			continue;
+		}
+
+		TOKEN("polymorph_drop_pct")
+		{
+			str_to_number(polymorph_drop_pct, value_string);
+			fprintf(stdout, "POLYMORPH_DROP_PCT: %d\n", polymorph_drop_pct);
 			continue;
 		}
 	}

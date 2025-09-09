@@ -84,6 +84,7 @@ extern DWORD g_GoldDropTimeLimitValue;
 extern int gPlayerMaxLevel;
 
 extern bool g_BlockCharCreation;
+extern int polymorph_drop_pct;
 
 #endif /* __INC_METIN_II_GAME_CONFIG_H__ */
 
