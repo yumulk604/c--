@@ -7,6 +7,11 @@
 #define POLYMORPH_SKILL_ID	129
 #define POLYMORPH_BOOK_ID	50322
 
+// Polymorph drop system
+#define POLYMORPH_DROP_EVENT_FLAG "polymorph_drop"
+#define POLYMORPH_DROP_MIN_LEVEL 30
+#define POLYMORPH_DROP_BASE_PCT 100
+
 enum POLYMORPH_BONUS_TYPE
 {
 	POLYMORPH_NO_BONUS,
@@ -31,6 +36,11 @@ class CPolymorphUtils : public singleton<CPolymorphUtils>
 		bool UpdateBookPracticeGrade(LPCHARACTER pChar, LPITEM pItem);
 		bool GiveBook(LPCHARACTER pChar, DWORD dwMobVnum, DWORD dwPracticeCount, BYTE BookLevel, BYTE LevelLimit);
 		bool BookUpgrade(LPCHARACTER pChar, LPITEM pItem);
+
+		// Drop system
+		bool ShouldDropPolymorphBook(LPCHARACTER pkKiller, LPCHARACTER pkVictim);
+		DWORD GetPolymorphBookVnum(LPCHARACTER pkVictim);
+		int GetDropPercent(LPCHARACTER pkKiller, LPCHARACTER pkVictim);
 };
 
 #endif /*__POLYMORPH_UTILS__*/

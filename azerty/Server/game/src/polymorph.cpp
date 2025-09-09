@@ -4,6 +4,8 @@
 #include "affect.h"
 #include "item.h"
 #include "polymorph.h"
+#include "questmanager.h"
+#include "item_manager.h"
 
 CPolymorphUtils::CPolymorphUtils()
 {
@@ -149,4 +151,86 @@ bool CPolymorphUtils::BookUpgrade(LPCHARACTER pChar, LPITEM pItem)
 	pItem->SetSocket(1, pItem->GetSocket(2) * 50);
 	pItem->SetSocket(2, pItem->GetSocket(2)+1);
 	return true;
+}
+
+bool CPolymorphUtils::ShouldDropPolymorphBook(LPCHARACTER pkKiller, LPCHARACTER pkVictim)
+{
+	if (!pkKiller || !pkVictim)
+		return false;
+
+	// Check if polymorph drop event is enabled
+	if (!quest::CQuestManager::instance().GetEventFlag(POLYMORPH_DROP_EVENT_FLAG))
+		return false;
+
+	// Check minimum level requirement
+	if (pkKiller->GetLevel() < POLYMORPH_DROP_MIN_LEVEL)
+		return false;
+
+	// Only drop from monsters, not players
+	if (pkVictim->IsPC())
+		return false;
+
+	// Check if victim is a valid polymorph target
+	if (pkVictim->GetMobRank() < MOB_RANK_KNIGHT)
+		return false;
+
+	// Calculate drop chance
+	int iDropPercent = GetDropPercent(pkKiller, pkVictim);
+	
+	return number(1, 10000) <= iDropPercent;
+}
+
+DWORD CPolymorphUtils::GetPolymorphBookVnum(LPCHARACTER pkVictim)
+{
+	if (!pkVictim)
+		return 0;
+
+	// Return the polymorph book for this specific monster
+	return POLYMORPH_BOOK_ID;
+}
+
+int CPolymorphUtils::GetDropPercent(LPCHARACTER pkKiller, LPCHARACTER pkVictim)
+{
+	if (!pkKiller || !pkVictim)
+		return 0;
+
+	int iBasePct = POLYMORPH_DROP_BASE_PCT;
+	
+	// Get event flag multiplier
+	int iEventMultiplier = quest::CQuestManager::instance().GetEventFlag(POLYMORPH_DROP_EVENT_FLAG);
+	if (iEventMultiplier <= 0)
+		return 0;
+
+	// Level difference bonus/penalty
+	int iLevelDiff = pkVictim->GetLevel() - pkKiller->GetLevel();
+	int iLevelBonus = 0;
+	
+	if (iLevelDiff >= 10)
+		iLevelBonus = 50; // 50% bonus for higher level monsters
+	else if (iLevelDiff >= 5)
+		iLevelBonus = 25; // 25% bonus
+	else if (iLevelDiff < -10)
+		iLevelBonus = -50; // 50% penalty for much lower level monsters
+
+	// Mob rank bonus
+	int iRankBonus = 0;
+	switch (pkVictim->GetMobRank())
+	{
+		case MOB_RANK_KNIGHT:
+			iRankBonus = 10;
+			break;
+		case MOB_RANK_BOSS:
+			iRankBonus = 50;
+			break;
+		case MOB_RANK_KING:
+			iRankBonus = 100;
+			break;
+		default:
+			break;
+	}
+
+	// Calculate final percentage
+	int iFinalPct = (iBasePct + iLevelBonus + iRankBonus) * iEventMultiplier / 100;
+	
+	return MINMAX(1, iFinalPct, 1000); // Cap between 0.01% and 10%
 }

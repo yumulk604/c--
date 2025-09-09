@@ -16,6 +16,7 @@
 #include "locale_service.h"
 #include "item.h"
 #include "item_manager.h"
+#include "polymorph.h"
 
 #include "../../common/VnumHelper.h"
 #include "cube.h"
@@ -1355,6 +1356,28 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 	__DropEvent_CharStone_DropItem(*pkKiller, *pkChr, *this, vec_item);
 	// END_OF_DROPEVENT_CHARSTONE
 	__DropEvent_RefineBox_DropItem(*pkKiller, *pkChr, *this, vec_item);
+
+	// Polymorph book drop
+	if (CPolymorphUtils::instance().ShouldDropPolymorphBook(pkKiller, pkChr))
+	{
+		DWORD dwBookVnum = CPolymorphUtils::instance().GetPolymorphBookVnum(pkChr);
+		if (dwBookVnum > 0)
+		{
+			LPITEM pPolymorphBook = CreateItem(dwBookVnum, 1, 0, true);
+			if (pPolymorphBook)
+			{
+				// Set the book to transform into the killed monster
+				pPolymorphBook->SetSocket(0, pkChr->GetRaceNum());
+				pPolymorphBook->SetSocket(1, 50); // Practice count
+				pPolymorphBook->SetSocket(2, 1);  // Book level
+				
+				vec_item.push_back(pPolymorphBook);
+				
+				sys_log(0, "POLYMORPH_DROP: Player %s got polymorph book for monster %u", 
+				        pkKiller->GetName(), pkChr->GetRaceNum());
+			}
+		}
+	}
 
 	// Å©¸®½º¸¶½º ¾ç¸»
 	if (quest::CQuestManager::instance().GetEventFlag("xmas_sock"))
