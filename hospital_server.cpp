@@ -1,4 +1,5 @@
 #include "hospital_packet.h"
+#include "hospital_db.h"
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -12,184 +13,7 @@
 #include <string>
 #include <algorithm>
 
-// Simple in-memory database structures
-struct Patient {
-    uint32_t id;
-    std::string name;
-    std::string surname;
-    std::string phone;
-    std::string address;
-    uint8_t age;
-    char gender;
-    std::string blood_type;
-    uint32_t registration_date;
-};
-
-struct Doctor {
-    uint32_t id;
-    std::string name;
-    std::string specialization;
-    std::map<uint8_t, std::pair<uint8_t, uint8_t>> schedule; // day -> (start_hour, end_hour)
-};
-
-struct Appointment {
-    uint32_t patient_id;
-    uint32_t doctor_id;
-    uint8_t day_of_week;
-    uint8_t hour;
-    std::string reason;
-    uint32_t appointment_date;
-};
-
-struct MedicalRecord {
-    uint32_t patient_id;
-    uint32_t doctor_id;
-    std::string diagnosis;
-    std::string treatment;
-    std::string medication;
-    uint32_t visit_date;
-    bool follow_up_required;
-};
-
-class HospitalDatabase {
-private:
-    std::vector<Patient> patients;
-    std::vector<Doctor> doctors;
-    std::vector<Appointment> appointments;
-    std::vector<MedicalRecord> medical_records;
-    uint32_t next_patient_id;
-    uint32_t next_doctor_id;
-
-public:
-    HospitalDatabase() : next_patient_id(1), next_doctor_id(1) {
-        // Initialize with some sample doctors
-        add_doctor("Dr. Smith", "Cardiology");
-        add_doctor("Dr. Johnson", "Neurology");
-        add_doctor("Dr. Williams", "Pediatrics");
-        add_doctor("Dr. Brown", "Orthopedics");
-        
-        // Set up doctor schedules (Monday to Friday, 9 AM to 5 PM)
-        for (auto& doctor : doctors) {
-            for (int day = 0; day < 5; day++) {
-                doctor.schedule[day] = {9, 17};
-            }
-        }
-    }
-
-    uint32_t add_patient(const TPacketPatientRegister& packet) {
-        Patient patient;
-        patient.id = next_patient_id++;
-        patient.name = packet.name;
-        patient.surname = packet.surname;
-        patient.phone = packet.phone;
-        patient.address = packet.address;
-        patient.age = packet.age;
-        patient.gender = packet.gender;
-        patient.blood_type = packet.blood_type;
-        patient.registration_date = static_cast<uint32_t>(time(nullptr));
-        
-        patients.push_back(patient);
-        return patient.id;
-    }
-
-    void add_doctor(const std::string& name, const std::string& specialization) {
-        Doctor doctor;
-        doctor.id = next_doctor_id++;
-        doctor.name = name;
-        doctor.specialization = specialization;
-        doctors.push_back(doctor);
-    }
-
-    Patient* find_patient_by_name(const std::string& name) {
-        for (auto& patient : patients) {
-            if (patient.name == name || patient.surname == name) {
-                return &patient;
-            }
-        }
-        return nullptr;
-    }
-
-    Patient* find_patient_by_phone(const std::string& phone) {
-        for (auto& patient : patients) {
-            if (patient.phone == phone) {
-                return &patient;
-            }
-        }
-        return nullptr;
-    }
-
-    Patient* find_patient_by_id(uint32_t id) {
-        for (auto& patient : patients) {
-            if (patient.id == id) {
-                return &patient;
-            }
-        }
-        return nullptr;
-    }
-
-    Doctor* find_doctor_by_id(uint32_t id) {
-        for (auto& doctor : doctors) {
-            if (doctor.id == id) {
-                return &doctor;
-            }
-        }
-        return nullptr;
-    }
-
-    bool book_appointment(uint32_t patient_id, uint32_t doctor_id, uint8_t day, uint8_t hour, const std::string& reason) {
-        // Check if doctor is available
-        Doctor* doctor = find_doctor_by_id(doctor_id);
-        if (!doctor) return false;
-        
-        auto schedule_it = doctor->schedule.find(day);
-        if (schedule_it == doctor->schedule.end()) return false;
-        
-        if (hour < schedule_it->second.first || hour >= schedule_it->second.second) {
-            return false;
-        }
-        
-        // Check for conflicts
-        for (const auto& appointment : appointments) {
-            if (appointment.doctor_id == doctor_id && 
-                appointment.day_of_week == day && 
-                appointment.hour == hour) {
-                return false;
-            }
-        }
-        
-        Appointment appointment;
-        appointment.patient_id = patient_id;
-        appointment.doctor_id = doctor_id;
-        appointment.day_of_week = day;
-        appointment.hour = hour;
-        appointment.reason = reason;
-        appointment.appointment_date = static_cast<uint32_t>(time(nullptr));
-        
-        appointments.push_back(appointment);
-        return true;
-    }
-
-    void add_medical_record(uint32_t patient_id, uint32_t doctor_id, 
-                           const std::string& diagnosis, const std::string& treatment,
-                           const std::string& medication, bool follow_up) {
-        MedicalRecord record;
-        record.patient_id = patient_id;
-        record.doctor_id = doctor_id;
-        record.diagnosis = diagnosis;
-        record.treatment = treatment;
-        record.medication = medication;
-        record.visit_date = static_cast<uint32_t>(time(nullptr));
-        record.follow_up_required = follow_up;
-        
-        medical_records.push_back(record);
-    }
-
-    std::vector<Doctor> get_doctors() const { return doctors; }
-    std::vector<Patient> get_patients() const { return patients; }
-    std::vector<Appointment> get_appointments() const { return appointments; }
-    std::vector<MedicalRecord> get_medical_records() const { return medical_records; }
-};
-
+// Global TimescaleDB database instance
 HospitalDatabase hospital_db;
 
 void send_response(int client_fd, uint8_t result, const char* message) {
@@ -199,47 +23,63 @@ void send_response(int client_fd, uint8_t result, const char* message) {
 }
 
 void handle_patient_register(int client_fd, const TPacketPatientRegister& packet) {
-    uint32_t patient_id = hospital_db.add_patient(packet);
-    char response_msg[128];
-    snprintf(response_msg, sizeof(response_msg), "Patient registered successfully with ID: %u", patient_id);
-    send_response(client_fd, 0, response_msg);
+    uint32_t patient_id = hospital_db.add_patient(packet.name, packet.surname, packet.phone, 
+                                                 packet.address, packet.age, packet.gender, 
+                                                 packet.blood_type);
+    if (patient_id > 0) {
+        char response_msg[128];
+        snprintf(response_msg, sizeof(response_msg), "Patient registered successfully with ID: %u", patient_id);
+        send_response(client_fd, 0, response_msg);
+    } else {
+        send_response(client_fd, 1, "Failed to register patient - database error");
+    }
 }
 
 void handle_patient_search(int client_fd, const TPacketPatientSearch& packet) {
-    Patient* patient = nullptr;
+    std::string name, surname, phone, address, blood_type;
+    uint8_t age;
+    char gender;
+    uint32_t id, registration_date;
+    bool found = false;
     
     switch (packet.search_type) {
         case 0: // Search by name
-            patient = hospital_db.find_patient_by_name(packet.search_term);
+            found = hospital_db.find_patient_by_name(packet.search_term, id, surname, phone,
+                                                   address, age, gender, blood_type, registration_date);
+            if (found) name = packet.search_term;
             break;
         case 1: // Search by phone
-            patient = hospital_db.find_patient_by_phone(packet.search_term);
+            found = hospital_db.find_patient_by_phone(packet.search_term, id, name, surname,
+                                                   address, age, gender, blood_type, registration_date);
+            if (found) phone = packet.search_term;
             break;
         case 2: // Search by ID
             {
-                uint32_t id = static_cast<uint32_t>(std::stoul(packet.search_term));
-                patient = hospital_db.find_patient_by_id(id);
+                uint32_t search_id = static_cast<uint32_t>(std::stoul(packet.search_term));
+                found = hospital_db.find_patient_by_id(search_id, name, surname, phone,
+                                                     address, age, gender, blood_type, registration_date);
+                if (found) id = search_id;
             }
             break;
     }
     
-    if (patient) {
+    if (found) {
         TPacketPatientInfo info;
         info.bHeader = HEADER_PATIENT_INFO;
-        info.patient_id = patient->id;
-        strncpy(info.name, patient->name.c_str(), sizeof(info.name) - 1);
+        info.patient_id = id;
+        strncpy(info.name, name.c_str(), sizeof(info.name) - 1);
         info.name[sizeof(info.name) - 1] = '\0';
-        strncpy(info.surname, patient->surname.c_str(), sizeof(info.surname) - 1);
+        strncpy(info.surname, surname.c_str(), sizeof(info.surname) - 1);
         info.surname[sizeof(info.surname) - 1] = '\0';
-        strncpy(info.phone, patient->phone.c_str(), sizeof(info.phone) - 1);
+        strncpy(info.phone, phone.c_str(), sizeof(info.phone) - 1);
         info.phone[sizeof(info.phone) - 1] = '\0';
-        strncpy(info.address, patient->address.c_str(), sizeof(info.address) - 1);
+        strncpy(info.address, address.c_str(), sizeof(info.address) - 1);
         info.address[sizeof(info.address) - 1] = '\0';
-        info.age = patient->age;
-        info.gender = patient->gender;
-        strncpy(info.blood_type, patient->blood_type.c_str(), sizeof(info.blood_type) - 1);
+        info.age = age;
+        info.gender = gender;
+        strncpy(info.blood_type, blood_type.c_str(), sizeof(info.blood_type) - 1);
         info.blood_type[sizeof(info.blood_type) - 1] = '\0';
-        info.registration_date = patient->registration_date;
+        info.registration_date = registration_date;
         
         send(client_fd, &info, sizeof(info), 0);
     } else {
@@ -248,21 +88,31 @@ void handle_patient_search(int client_fd, const TPacketPatientSearch& packet) {
 }
 
 void handle_appointment_booking(int client_fd, const TPacketAppointmentBook& packet) {
+    // Check if appointment slot is available
+    if (!hospital_db.is_appointment_available(packet.doctor_id, packet.day_of_week, packet.hour)) {
+        send_response(client_fd, 1, "Appointment slot not available");
+        return;
+    }
+    
     bool success = hospital_db.book_appointment(packet.patient_id, packet.doctor_id, 
                                                packet.day_of_week, packet.hour, packet.reason);
     
     if (success) {
         send_response(client_fd, 0, "Appointment booked successfully");
     } else {
-        send_response(client_fd, 1, "Failed to book appointment - doctor not available or time slot taken");
+        send_response(client_fd, 1, "Failed to book appointment - database error");
     }
 }
 
 void handle_medical_record(int client_fd, const TPacketMedicalRecord& packet) {
-    hospital_db.add_medical_record(packet.patient_id, packet.doctor_id,
-                                  packet.diagnosis, packet.treatment,
-                                  packet.medication, packet.follow_up_required);
-    send_response(client_fd, 0, "Medical record added successfully");
+    bool success = hospital_db.add_medical_record(packet.patient_id, packet.doctor_id,
+                                                 packet.diagnosis, packet.treatment,
+                                                 packet.medication, packet.follow_up_required);
+    if (success) {
+        send_response(client_fd, 0, "Medical record added successfully");
+    } else {
+        send_response(client_fd, 1, "Failed to add medical record - database error");
+    }
 }
 
 void handle_client_request(int client_fd, uint8_t header) {
@@ -316,6 +166,35 @@ void handle_client_request(int client_fd, uint8_t header) {
 int main() {
     srand(static_cast<unsigned int>(time(nullptr)));
 
+    // Initialize TimescaleDB connection
+    std::cout << "Connecting to TimescaleDB..." << std::endl;
+    if (!hospital_db.connect()) {
+        std::cerr << "Failed to connect to TimescaleDB. Please check your database configuration." << std::endl;
+        return 1;
+    }
+
+    // Initialize database schema
+    std::cout << "Initializing database schema..." << std::endl;
+    if (!hospital_db.create_tables()) {
+        std::cerr << "Failed to create database tables" << std::endl;
+        return 1;
+    }
+
+    if (!hospital_db.create_hypertables()) {
+        std::cerr << "Failed to create TimescaleDB hypertables" << std::endl;
+        return 1;
+    }
+
+    if (!hospital_db.insert_sample_data()) {
+        std::cerr << "Failed to insert sample data" << std::endl;
+        return 1;
+    }
+
+    std::cout << "Database initialized successfully!" << std::endl;
+    std::cout << "Patients: " << hospital_db.get_patient_count() << std::endl;
+    std::cout << "Appointments: " << hospital_db.get_appointment_count() << std::endl;
+    std::cout << "Medical Records: " << hospital_db.get_medical_record_count() << std::endl;
+
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == -1) {
         perror("socket");
@@ -340,12 +219,12 @@ int main() {
         return 1;
     }
 
-    std::cout << "Hospital Management Server started on port 13000\n";
-    std::cout << "Available operations:\n";
-    std::cout << "- Patient Registration (0x01)\n";
-    std::cout << "- Patient Search (0x02)\n";
-    std::cout << "- Appointment Booking (0x05)\n";
-    std::cout << "- Medical Record Entry (0x06)\n";
+    std::cout << "\nHospital Management Server started on port 13000" << std::endl;
+    std::cout << "Available operations:" << std::endl;
+    std::cout << "- Patient Registration (0x01)" << std::endl;
+    std::cout << "- Patient Search (0x02)" << std::endl;
+    std::cout << "- Appointment Booking (0x05)" << std::endl;
+    std::cout << "- Medical Record Entry (0x06)" << std::endl;
 
     while (true) {
         sockaddr_in client_addr{};

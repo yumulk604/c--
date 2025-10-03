@@ -1,6 +1,6 @@
 # Hospital Management System
 
-Bu proje, Metin2 sunucu kodlarından esinlenerek geliştirilmiş basit bir hastane yönetim sistemidir. Socket tabanlı iletişim kullanarak hasta kayıt, doktor randevu sistemi ve tıbbi kayıt yönetimi sağlar.
+Bu proje, Metin2 sunucu kodlarından esinlenerek geliştirilmiş gelişmiş bir hastane yönetim sistemidir. Socket tabanlı iletişim ve TimescaleDB veritabanı kullanarak hasta kayıt, doktor randevu sistemi ve tıbbi kayıt yönetimi sağlar.
 
 ## Özellikler
 
@@ -9,21 +9,57 @@ Bu proje, Metin2 sunucu kodlarından esinlenerek geliştirilmiş basit bir hasta
 - **Randevu Sistemi**: Doktor randevu rezervasyonu
 - **Tıbbi Kayıt**: Hasta muayene kayıtları ve tedavi bilgileri
 - **Socket İletişimi**: TCP/IP tabanlı client-server mimarisi
+- **TimescaleDB Entegrasyonu**: Zaman serisi veritabanı desteği
+- **Admin Arayüzü**: Gelişmiş yönetim paneli
+- **Hypertable Desteği**: Büyük veri setleri için optimize edilmiş tablolar
 
 ## Dosya Yapısı
 
 - `hospital_packet.h`: Paket tanımları ve veri yapıları
+- `hospital_db.h/cpp`: TimescaleDB veritabanı sınıfı
 - `hospital_server.cpp`: Ana sunucu uygulaması
-- `hospital_client.cpp`: İstemci uygulaması
+- `hospital_client.cpp`: Basit test istemcisi
+- `hospital_admin.cpp`: Gelişmiş admin arayüzü
+- `setup_timescaledb.sql`: Veritabanı kurulum scripti
+- `setup_hospital.sh`: Otomatik kurulum scripti
 - `Makefile`: Derleme dosyası
 
-## Derleme
+## Kurulum
+
+### Otomatik Kurulum (Önerilen)
 
 ```bash
-make all
+./setup_hospital.sh
 ```
 
-Bu komut hem sunucuyu hem de istemciyi derler.
+Bu script:
+- PostgreSQL ve TimescaleDB kurulumunu kontrol eder
+- Veritabanı şemasını oluşturur
+- Gerekli kütüphaneleri yükler
+- Uygulamaları derler
+
+### Manuel Kurulum
+
+1. **TimescaleDB Kurulumu**:
+   ```bash
+   # Ubuntu/Debian
+   sudo apt-get install postgresql postgresql-contrib
+   sudo apt-get install timescaledb-postgresql-13
+   
+   # CentOS/RHEL
+   sudo yum install postgresql postgresql-server
+   sudo yum install timescaledb-postgresql-13
+   ```
+
+2. **Veritabanı Kurulumu**:
+   ```bash
+   sudo -u postgres psql -f setup_timescaledb.sql
+   ```
+
+3. **Derleme**:
+   ```bash
+   make all
+   ```
 
 ## Kullanım
 
@@ -33,8 +69,21 @@ Bu komut hem sunucuyu hem de istemciyi derler.
 ./hospital_server
 ```
 
-Sunucu port 13000'de çalışmaya başlar ve şu mesajı gösterir:
+Sunucu TimescaleDB'ye bağlanır, şemayı oluşturur ve port 13000'de çalışmaya başlar:
 ```
+Connecting to TimescaleDB...
+Connected to TimescaleDB successfully
+Creating database tables...
+Database tables created successfully
+Creating TimescaleDB hypertables...
+TimescaleDB hypertables created successfully
+Inserting sample data...
+Sample data inserted successfully
+Database initialized successfully!
+Patients: 0
+Appointments: 0
+Medical Records: 0
+
 Hospital Management Server started on port 13000
 Available operations:
 - Patient Registration (0x01)
@@ -43,13 +92,31 @@ Available operations:
 - Medical Record Entry (0x06)
 ```
 
-### 2. İstemciyi Çalıştırma
+### 2. Admin Arayüzünü Çalıştırma (Önerilen)
+
+```bash
+./hospital_admin
+```
+
+Gelişmiş admin arayüzü:
+```
+=== Hospital Administration System ===
+1. Database Statistics
+2. Patient Management
+3. Doctor Management
+4. Appointment Management
+5. Medical Records
+6. Database Maintenance
+7. Exit
+```
+
+### 3. Basit İstemciyi Çalıştırma
 
 ```bash
 ./hospital_client
 ```
 
-İstemci sunucuya bağlanır ve menü gösterir:
+Basit test istemcisi:
 ```
 === Hospital Management System ===
 1. Register Patient
@@ -133,7 +200,9 @@ Tüm doktorlar Pazartesi-Cuma 09:00-17:00 arası çalışır.
 - **C++ Standardı**: C++11
 - **Socket**: AF_INET, SOCK_STREAM
 - **Port**: 13000
-- **Veri Tabanı**: Bellek içi (in-memory) basit yapılar
+- **Veri Tabanı**: TimescaleDB (PostgreSQL tabanlı zaman serisi veritabanı)
+- **Kütüphaneler**: libpq (PostgreSQL client library)
+- **Hypertables**: Randevu ve tıbbi kayıtlar için optimize edilmiş zaman serisi tabloları
 
 ## Temizleme
 
@@ -143,9 +212,24 @@ make clean
 
 Bu komut derlenmiş dosyaları temizler.
 
+## Veritabanı Yapısı
+
+### Tablolar
+- **patients**: Hasta bilgileri
+- **doctors**: Doktor bilgileri  
+- **appointments**: Randevu kayıtları (hypertable)
+- **medical_records**: Tıbbi kayıtlar (hypertable)
+
+### TimescaleDB Özellikleri
+- **Hypertables**: Büyük veri setleri için otomatik parçalama
+- **Time-series optimization**: Zaman bazlı sorgular için optimize edilmiş
+- **Compression**: Veri sıkıştırma desteği
+- **Continuous aggregates**: Önceden hesaplanmış toplamlar
+
 ## Notlar
 
 - Bu sistem eğitim amaçlıdır ve gerçek hastane ortamında kullanılmamalıdır
-- Veriler sunucu kapatıldığında kaybolur (kalıcı depolama yok)
+- Veriler TimescaleDB'de kalıcı olarak saklanır
 - Güvenlik önlemleri minimal seviyededir
 - Çoklu istemci desteği sınırlıdır (tek seferde bir bağlantı)
+- TimescaleDB kurulumu gereklidir
