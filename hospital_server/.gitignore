@@ -1,0 +1,14 @@
+# Compiled binaries
+hospital_server
+hospital_client
+
+# Object files
+*.o
+
+# Backup files
+*~
+*.swp
+*.swo
+
+# OS files
+.DS_Store
