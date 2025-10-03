@@ -1,0 +1,23 @@
+CXX=g++
+CXXFLAGS=-std=c++11 -Wall -O2
+
+# Simple version without MySQL for testing
+all: hospital_client simple_test_server
+
+hospital_client: hospital_client.o
+	$(CXX) $(CXXFLAGS) -o hospital_client hospital_client.o
+
+hospital_client.o: hospital_client.cpp hospital_packet.h
+	$(CXX) $(CXXFLAGS) -c hospital_client.cpp
+
+# Simple test server without database
+simple_test_server: simple_test_server.o
+	$(CXX) $(CXXFLAGS) -o simple_test_server simple_test_server.o -pthread
+
+simple_test_server.o: simple_test_server.cpp hospital_packet.h
+	$(CXX) $(CXXFLAGS) -c simple_test_server.cpp
+
+clean:
+	rm -f *.o hospital_client simple_test_server
+
+.PHONY: all clean
