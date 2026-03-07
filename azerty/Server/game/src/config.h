@@ -1,6 +1,8 @@
 #ifndef __INC_METIN_II_GAME_CONFIG_H__
 #define __INC_METIN_II_GAME_CONFIG_H__
 
+#include <cstddef>
+
 enum
 {
 	ADDRESS_MAX_LEN = 15
@@ -30,7 +32,7 @@ extern bool	g_bTrafficProfileOn;
 extern BYTE	g_bChannel;
 
 extern bool	map_allow_find(int index);
-extern void	map_allow_copy(long * pl, int size);
+extern void	map_allow_copy(long * pl, std::size_t size);
 extern bool	no_wander;
 
 extern int	g_iUserLimit;

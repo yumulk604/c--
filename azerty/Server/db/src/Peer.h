@@ -3,6 +3,7 @@
 #define __INC_PEER_H__
 
 #include "PeerBase.h"
+#include "../../common/tables.h"
 
 class CPeer : public CPeerBase
 {
@@ -66,9 +67,9 @@ class CPeer : public CPeerBase
 	BYTE	m_bChannel;
 	DWORD	m_dwHandle;
 	DWORD	m_dwUserCount;
-	WORD	m_wListenPort;	// 게임서버가 클라이언트를 위해 listen 하는 포트
-	WORD	m_wP2PPort;	// 게임서버가 게임서버 P2P 접속을 위해 listen 하는 포트
-	long	m_alMaps[32];	// 어떤 맵을 관장하고 있는가?
+	WORD	m_wListenPort;	// 憺 클潔트  listen 求 트
+	WORD	m_wP2PPort;	// 憺 憺 P2P   listen 求 트
+	long	m_alMaps[MAP_ALLOW_LIMIT];	// 錚�  構 獵째?
 
 	TItemIDRangeTable m_itemRange;
 	TItemIDRangeTable m_itemSpareRange;
