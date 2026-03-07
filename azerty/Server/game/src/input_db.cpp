@@ -1,4 +1,5 @@
-#include "stdafx.h" 
+#include "stdafx.h"
+#include "../../common/length.h" 
 #include "constants.h"
 #include "config.h"
 #include "utils.h"
@@ -120,7 +121,7 @@ void CInputDB::LoginSuccess(DWORD dwHandle, const char *data)
 		return;
 	}
 
-	if (strcmp(pTab->status, "OK")) // OK°¡ ¾Æ´Ï¸é
+	if (strcmp(pTab->status, "OK")) // OKê°€ ì•„ë‹ˆë©´
 	{
 		sys_log(0, "CInputDB::LoginSuccess - status[%s] is not OK [%s]", pTab->status, pTab->login);
 
@@ -303,7 +304,7 @@ void CInputDB::PlayerLoad(LPDESC d, const char * data)
 	{
 		lMapIndex = SECTREE_MANAGER::instance().GetMapIndex(pTab->x, pTab->y);
 
-		if (lMapIndex == 0) // ÁÂÇ¥¸¦ Ã£À» ¼ö ¾ø´Ù.
+		if (lMapIndex == 0) // ì¢Œí‘œë¥¼ ì°¾ì„ ìˆ˜ ì—†ë‹¤.
 		{
 			lMapIndex = EMPIRE_START_MAP(d->GetAccountTable().bEmpire);
 			pos.x = EMPIRE_START_X(d->GetAccountTable().bEmpire);
@@ -317,11 +318,11 @@ void CInputDB::PlayerLoad(LPDESC d, const char * data)
 	}
 	pTab->lMapIndex = lMapIndex;
 
-	// Private ¸Ê¿¡ ÀÖ¾ú´Âµ¥, Private ¸ÊÀÌ »ç¶óÁø »óÅÂ¶ó¸é Ãâ±¸·Î µ¹¾Æ°¡¾ß ÇÑ´Ù.
+	// Private ë§µì— ìˆì—ˆëŠ”ë°, Private ë§µì´ ì‚¬ë¼ì§„ ìƒíƒœë¼ë©´ ì¶œêµ¬ë¡œ ëŒì•„ê°€ì•¼ í•œë‹¤.
 	// ----
-	// ±Ùµ¥ Ãâ±¸·Î µ¹¾Æ°¡¾ß ÇÑ´Ù¸é¼­... ¿Ö Ãâ±¸°¡ ¾Æ´Ï¶ó private map »ó¿¡ ´ëÀÀµÇ´Â pulic mapÀÇ À§Ä¡¸¦ Ã£³Ä°í...
-	// ¿ª»ç¸¦ ¸ğ¸£´Ï... ¶Ç ÇÏµåÄÚµù ÇÑ´Ù.
-	// ¾Æ±Íµ¿±¼ÀÌ¸é, Ãâ±¸·Î...
+	// ê·¼ë° ì¶œêµ¬ë¡œ ëŒì•„ê°€ì•¼ í•œë‹¤ë©´ì„œ... ì™œ ì¶œêµ¬ê°€ ì•„ë‹ˆë¼ private map ìƒì— ëŒ€ì‘ë˜ëŠ” pulic mapì˜ ìœ„ì¹˜ë¥¼ ì°¾ëƒê³ ...
+	// ì—­ì‚¬ë¥¼ ëª¨ë¥´ë‹ˆ... ë˜ í•˜ë“œì½”ë”© í•œë‹¤.
+	// ì•„ê·€ë™êµ´ì´ë©´, ì¶œêµ¬ë¡œ...
 	// by rtsummit
 	if (!SECTREE_MANAGER::instance().GetValidLocation(pTab->lMapIndex, pTab->x, pTab->y, lMapIndex, pos, d->GetEmpire()))
 	{
@@ -424,11 +425,11 @@ void CInputDB::Boot(const char* data)
 {
 	signal_timer_disable();
 
-	// ÆĞÅ¶ »çÀÌÁî Ã¼Å©
+	// íŒ¨í‚· ì‚¬ì´ì¦ˆ ì²´í¬
 	DWORD dwPacketSize = decode_4bytes(data);
 	data += 4;
 
-	// ÆĞÅ¶ ¹öÀü Ã¼Å©
+	// íŒ¨í‚· ë²„ì „ ì²´í¬
 	BYTE bVersion = decode_byte(data);
 	data += 1;
 
@@ -743,7 +744,7 @@ void CInputDB::Boot(const char* data)
 	data += size * sizeof(TItemIDRangeTable);
 
 	//ADMIN_MANAGER
-	//°ü¸®ÀÚ µî·Ï
+	//ê´€ë¦¬ì ë“±ë¡
 	int ChunkSize = decode_2bytes(data );
 	data += 2;
 	int HostSize = decode_2bytes(data );
@@ -1049,7 +1050,7 @@ void CInputDB::SafeboxLoad(LPDESC d, const char * c_pData)
 	//PREVENT_TRADE_WINDOW
 	if (ch->GetShopOwner() || ch->GetExchange() || ch->GetMyShop() || ch->IsCubeOpen() )
 	{
-		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, "Altceva se petrece în acest moment.");
+		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, "Altceva se petrece n acest moment.");
 		d->GetCharacter()->CancelSafeboxLoad();
 		return;
 	}
@@ -1062,7 +1063,7 @@ void CInputDB::SafeboxLoad(LPDESC d, const char * c_pData)
 	// END_OF_ADD_PREMIUM
 
 	//if (d->GetCharacter()->IsEquipUniqueItem(UNIQUE_ITEM_SAFEBOX_EXPAND))
-	//bSize = 3; // Ã¢°íÈ®Àå±Ç
+	//bSize = 3; // ì°½ê³ í™•ì¥ê¶Œ
 
 	//d->GetCharacter()->LoadSafebox(p->bSize * SAFEBOX_PAGE_SIZE, p->dwGold, p->wItemCount, (TPlayerItem *) (c_pData + sizeof(TSafeboxTable)));
 	d->GetCharacter()->LoadSafebox(bSize * SAFEBOX_PAGE_SIZE, p->dwGold, p->wItemCount, (TPlayerItem *) (c_pData + sizeof(TSafeboxTable)));
@@ -1082,7 +1083,7 @@ void CInputDB::SafeboxChangeSize(LPDESC d, const char * c_pData)
 }
 
 //
-// @version	05/06/20 Bang2ni - ReqSafeboxLoad ÀÇ Ãë¼Ò
+// @version	05/06/20 Bang2ni - ReqSafeboxLoad ì˜ ì·¨ì†Œ
 //
 void CInputDB::SafeboxWrongPassword(LPDESC d)
 {
@@ -1109,9 +1110,9 @@ void CInputDB::SafeboxChangePasswordAnswer(LPDESC d, const char* c_pData)
 
 	TSafeboxChangePasswordPacketAnswer* p = (TSafeboxChangePasswordPacketAnswer*) c_pData;
 	if (p->flag)
-		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, "Parola a fost schimbatã cu succes.");
+		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, "Parola a fost schimbat cu succes.");
 	else
-		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, "Parola nu a fost schimbatã.");
+		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, "Parola nu a fost schimbat.");
 }
 
 void CInputDB::MallLoad(LPDESC d, const char * c_pData)
@@ -1138,7 +1139,7 @@ void CInputDB::LoginAlready(LPDESC d, const char * c_pData)
 	if (!d)
 		return;
 
-	// INTERNATIONAL_VERSION ÀÌ¹Ì Á¢¼ÓÁßÀÌ¸é Á¢¼Ó ²÷À½
+	// INTERNATIONAL_VERSION ì´ë¯¸ ì ‘ì†ì¤‘ì´ë©´ ì ‘ì† ëŠìŒ
 	{ 
 		TPacketDGLoginAlready * p = (TPacketDGLoginAlready *) c_pData;
 
@@ -1216,7 +1217,7 @@ void CInputDB::MapLocations(const char * c_pData)
 
 	while (bCount--)
 	{
-		for (int i = 0; i < 32; ++i)
+		for (std::size_t i = 0; i < MAP_ALLOW_LIMIT; ++i)
 		{
 			if (0 == pLoc->alMaps[i])
 				break;
@@ -1632,7 +1633,7 @@ void CInputDB::AuthLogin(LPDESC d, const char * c_pData)
 	{
 		ptoc.dwLoginKey = d->GetLoginKey();
 
-		//NOTE: AuthSucessº¸´Ù ¸ÕÀú º¸³»¾ßÁö ¾È±×·¯¸é PHASE Close°¡ µÇ¼­ º¸³»ÁöÁö ¾Ê´Â´Ù.-_-
+		//NOTE: AuthSucessë³´ë‹¤ ë¨¼ì € ë³´ë‚´ì•¼ì§€ ì•ˆê·¸ëŸ¬ë©´ PHASE Closeê°€ ë˜ì„œ ë³´ë‚´ì§€ì§€ ì•ŠëŠ”ë‹¤.-_-
 		//Send Client Package CryptKey
 		{
 			DESC_MANAGER::instance().SendClientPackageCryptKey(d);
@@ -1660,7 +1661,7 @@ void CInputDB::ChangeEmpirePriv(const char* c_pData)
 }
 
 /**
- * @version 05/06/08	Bang2ni - Áö¼Ó½Ã°£ Ãß°¡
+ * @version 05/06/08	Bang2ni - ì§€ì†ì‹œê°„ ì¶”ê°€
  */
 void CInputDB::ChangeGuildPriv(const char* c_pData)
 {
@@ -1782,7 +1783,7 @@ void CInputDB::BillingExpire(const char * c_pData)
 			d->SetBillingExpireSecond(p->dwRemainSeconds);
 
 			if (ch)
-				ch->ChatPacket(CHAT_TYPE_INFO, "Plata în %d ore.", (p->dwRemainSeconds / 60));
+				ch->ChatPacket(CHAT_TYPE_INFO, "Plata n %d ore.", (p->dwRemainSeconds / 60));
 		}
 	}
 }
@@ -1943,7 +1944,7 @@ void CInputDB::ReloadAdmin(const char * c_pData )
 
 ////////////////////////////////////////////////////////////////////
 // Analyze
-// @version	05/06/10 Bang2ni - ¾ÆÀÌÅÛ °¡°İÁ¤º¸ ¸®½ºÆ® ÆĞÅ¶(HEADER_DG_MYSHOP_PRICELIST_RES) Ã³¸®·çÆ¾ Ãß°¡.
+// @version	05/06/10 Bang2ni - ì•„ì´í…œ ê°€ê²©ì •ë³´ ë¦¬ìŠ¤íŠ¸ íŒ¨í‚·(HEADER_DG_MYSHOP_PRICELIST_RES) ì²˜ë¦¬ë£¨í‹´ ì¶”ê°€.
 ////////////////////////////////////////////////////////////////////
 int CInputDB::Analyze(LPDESC d, BYTE bHeader, const char * c_pData)
 {
@@ -2270,7 +2271,7 @@ int CInputDB::Analyze(LPDESC d, BYTE bHeader, const char * c_pData)
 	case HEADER_DG_NEED_LOGIN_LOG:
 		DetailLog( (TPacketNeedLoginLogInfo*) c_pData );
 		break;
-	// µ¶ÀÏ ¼±¹° ±â´É Å×½ºÆ®
+	// ë…ì¼ ì„ ë¬¼ ê¸°ëŠ¥ í…ŒìŠ¤íŠ¸
 	case HEADER_DG_ITEMAWARD_INFORMER:
 		ItemAwardInformer((TPacketItemAwardInfromer*) c_pData);
 		break;
@@ -2354,7 +2355,7 @@ void CInputDB::DetailLog(const TPacketNeedLoginLogInfo* info)
 
 void CInputDB::ItemAwardInformer(TPacketItemAwardInfromer *data)
 {	
-	LPDESC d = DESC_MANAGER::instance().FindByLoginName(data->login);	//loginÁ¤º¸
+	LPDESC d = DESC_MANAGER::instance().FindByLoginName(data->login);	//loginì •ë³´
 	
 	if(d == NULL)
 		return;
@@ -2363,12 +2364,12 @@ void CInputDB::ItemAwardInformer(TPacketItemAwardInfromer *data)
 		if (d->GetCharacter())
 		{
 			LPCHARACTER ch = d->GetCharacter();	
-			ch->SetItemAward_vnum(data->vnum);	// ch ¿¡ ÀÓ½Ã ÀúÀåÇØ³ù´Ù°¡ QuestLoad ÇÔ¼ö¿¡¼­ Ã³¸®
+			ch->SetItemAward_vnum(data->vnum);	// ch ì— ì„ì‹œ ì €ì¥í•´ë†¨ë‹¤ê°€ QuestLoad í•¨ìˆ˜ì—ì„œ ì²˜ë¦¬
 			ch->SetItemAward_cmd(data->command);		
 
-			if(d->IsPhase(PHASE_GAME))			//°ÔÀÓÆäÀÌÁîÀÏ¶§
+			if(d->IsPhase(PHASE_GAME))			//ê²Œì„í˜ì´ì¦ˆì¼ë•Œ
 			{
-				quest::CQuestManager::instance().ItemInformer(ch->GetPlayerID(),ch->GetItemAward_vnum());	//questmanager È£Ãâ
+				quest::CQuestManager::instance().ItemInformer(ch->GetPlayerID(),ch->GetItemAward_vnum());	//questmanager í˜¸ì¶œ
 			}
 		}
 	}
