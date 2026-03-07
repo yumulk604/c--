@@ -9,7 +9,133 @@
 #include "db.h"
 #include "limit_time.h"
 
+#include <algorithm>
+#include <iterator>
+#include <memory>
+#include <string>
+#include <vector>
+
 extern time_t get_global_time();
+
+namespace
+{
+
+std::string Base64UrlDecode(const std::string& input)
+{
+        static const std::string base64_chars =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz"
+                "0123456789+/";
+
+        std::string padded = input;
+        std::replace(padded.begin(), padded.end(), '-', '+');
+        std::replace(padded.begin(), padded.end(), '_', '/');
+
+        while (padded.size() % 4)
+                padded.push_back('=');
+
+        std::string output;
+        std::vector<int> char_value(256, -1);
+        for (size_t i = 0; i < base64_chars.size(); ++i)
+                char_value[static_cast<size_t>(base64_chars[i])] = static_cast<int>(i);
+
+        int val = 0;
+        int bits = -8;
+        for (unsigned char c : padded)
+        {
+                if (char_value[c] == -1)
+                        continue;
+
+                val = (val << 6) + char_value[c];
+                bits += 6;
+
+                if (bits >= 0)
+                {
+                        output.push_back(static_cast<char>((val >> bits) & 0xFF));
+                        bits -= 8;
+                }
+        }
+
+        return output;
+}
+
+bool ExtractJsonStringField(const std::string& json, const std::string& key, std::string& out)
+{
+        const std::string pattern = "\"" + key + "\"";
+        size_t start = json.find(pattern);
+        if (start == std::string::npos)
+                return false;
+
+        start = json.find('"', start + pattern.size());
+        if (start == std::string::npos)
+                return false;
+
+        size_t end = json.find('"', start + 1);
+        if (end == std::string::npos || end <= start + 1)
+                return false;
+
+        out.assign(json.begin() + static_cast<std::string::difference_type>(start + 1),
+                   json.begin() + static_cast<std::string::difference_type>(end));
+        return true;
+}
+
+bool ParseGoogleIdToken(const std::string& token, std::string& email, std::string& subject)
+{
+        size_t first_dot = token.find('.');
+        size_t second_dot = token.find('.', first_dot == std::string::npos ? 0 : first_dot + 1);
+
+        if (first_dot == std::string::npos || second_dot == std::string::npos)
+                return false;
+
+        const std::string payload = token.substr(first_dot + 1, second_dot - first_dot - 1);
+        const std::string decoded = Base64UrlDecode(payload);
+
+        if (!ExtractJsonStringField(decoded, "email", email))
+                return false;
+
+        if (!ExtractJsonStringField(decoded, "sub", subject))
+                return false;
+
+        return true;
+}
+
+std::string NormalizeGoogleLogin(const std::string& email)
+{
+        std::string normalized = email;
+        std::transform(normalized.begin(), normalized.end(), normalized.begin(), tolower);
+        return normalized;
+}
+
+bool EnsureGoogleAccount(const std::string& email, const std::string& googlePassword)
+{
+        char escapedLogin[LOGIN_MAX_LEN * 2 + 1];
+        char escapedPassword[PASSWD_MAX_LEN * 2 + 1];
+
+        DBManager::instance().EscapeString(escapedLogin, sizeof(escapedLogin), email.c_str(), email.size());
+        DBManager::instance().EscapeString(escapedPassword, sizeof(escapedPassword), googlePassword.c_str(), googlePassword.size());
+
+        std::unique_ptr<SQLMsg> selectMsg(DBManager::instance().DirectQuery(
+                "SELECT id FROM account WHERE login='%s'", escapedLogin));
+
+        if (!selectMsg || !selectMsg->Get())
+                return false;
+
+        if (selectMsg->Get()->uiNumRows > 0)
+        {
+                        std::unique_ptr<SQLMsg> updateMsg(DBManager::instance().DirectQuery(
+                        "UPDATE account SET password=PASSWORD('%s') WHERE login='%s'",
+                        escapedPassword, escapedLogin));
+                return updateMsg && updateMsg->Get();
+        }
+
+        std::unique_ptr<SQLMsg> insertMsg(DBManager::instance().DirectQuery(
+                "INSERT INTO account (login,password,status,create_time) VALUES('%s', PASSWORD('%s'), 'OK', NOW())",
+                escapedLogin, escapedPassword));
+
+        return insertMsg && insertMsg->Get();
+}
+
+}
 
 bool FN_IS_VALID_LOGIN_STRING(const char *str)
 {
@@ -23,7 +149,7 @@ bool FN_IS_VALID_LOGIN_STRING(const char *str)
 
 	for (tmp = str; *tmp; ++tmp)
 	{
-		// ¾ËÆÄºª°ú ¼öÀÚ¸¸ Çã¿ë
+		// ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½
 		if (isdigit(*tmp) || isalpha(*tmp))
 			continue;
 
@@ -65,18 +191,39 @@ void CInputAuth::Login(LPDESC d, const char * c_pData)
 		return;
 	}
 
-	// string ¹«°á¼ºÀ» À§ÇØ º¹»ç
+	// string ï¿½ï¿½ï¿½á¼ºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	char login[LOGIN_MAX_LEN + 1];
 	trim_and_lower(pinfo->login, login, sizeof(login));
 
 	char passwd[PASSWD_MAX_LEN + 1];
 	strlcpy(passwd, pinfo->passwd, sizeof(passwd));
 
+	bool bGoogleLogin = false;
+	std::string googleEmail;
+	std::string googleSubject;
+
+	if (strchr(passwd, '.') && ParseGoogleIdToken(passwd, googleEmail, googleSubject))
+	{
+		const std::string normalized = NormalizeGoogleLogin(googleEmail);
+		std::string googlePassword = "google-" + googleSubject;
+
+		if (!EnsureGoogleAccount(normalized, googlePassword))
+		{
+			sys_log(0, "InputAuth::Login : GOOGLE_REGISTER_FAIL(%s) desc %p", normalized.c_str(), get_pointer(d));
+			LoginFailure(d, "NOID");
+			return;
+		}
+
+		strlcpy(login, normalized.c_str(), sizeof(login));
+		strlcpy(passwd, googlePassword.c_str(), sizeof(passwd));
+		bGoogleLogin = true;
+	}
+
 	sys_log(0, "InputAuth::Login : %s(%d) desc %p",
 			login, strlen(login), get_pointer(d));
 
 	// check login string
-	if (false == FN_IS_VALID_LOGIN_STRING(login))
+	if (!bGoogleLogin && false == FN_IS_VALID_LOGIN_STRING(login))
 	{
 		sys_log(0, "InputAuth::Login : IS_NOT_VALID_LOGIN_STRING(%s) desc %p",
 				login, get_pointer(d));
