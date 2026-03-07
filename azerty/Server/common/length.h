@@ -1,7 +1,11 @@
 #ifndef __INC_METIN_II_LENGTH_H__
 #define __INC_METIN_II_LENGTH_H__
 
+#include <cstddef>
+
 #define WORD_MAX 0xffff
+
+constexpr std::size_t MAP_ALLOW_LIMIT = 32; // default map allowance cap
 enum EMisc
 {
 	MAX_HOST_LENGTH			= 15,
@@ -21,10 +25,10 @@ enum EMisc
 
 	GUILD_NAME_MAX_LEN		= 12,
 
-	SHOP_HOST_ITEM_MAX_NUM	= 40,	/* È£½ºÆ®ÀÇ ÃÖ´ë ¾ÆÀÌÅÛ °³¼ö */
-	SHOP_GUEST_ITEM_MAX_NUM = 18,	/* °Ô½ºÆ®ÀÇ ÃÖ´ë ¾ÆÀÌÅÛ °³¼ö */
+	SHOP_HOST_ITEM_MAX_NUM	= 40,	/* í˜¸ìŠ¤íŠ¸ì˜ ìµœëŒ€ ì•„ì´í…œ ê°œìˆ˜ */
+	SHOP_GUEST_ITEM_MAX_NUM = 18,	/* ê²ŒìŠ¤íŠ¸ì˜ ìµœëŒ€ ì•„ì´í…œ ê°œìˆ˜ */
 
-	SHOP_PRICELIST_MAX_NUM	= 40,	///< °³ÀÎ»óÁ¡ °¡°ÝÁ¤º¸ ¸®½ºÆ®¿¡¼­ À¯ÁöÇÒ °¡°ÝÁ¤º¸ÀÇ ÃÖ´ë °¹¼ö
+	SHOP_PRICELIST_MAX_NUM	= 40,	///< ê°œì¸ìƒì  ê°€ê²©ì •ë³´ ë¦¬ìŠ¤íŠ¸ì—ì„œ ìœ ì§€í•  ê°€ê²©ì •ë³´ì˜ ìµœëŒ€ ê°¯ìˆ˜
 
 	CHAT_MAX_LEN			= 512,
 
@@ -110,7 +114,7 @@ enum EDirection
 	DIR_MAX_NUM
 };
 
-#define ABILITY_MAX_LEVEL	10  /* ±â¼ú ÃÖ´ë ·¹º§ */
+#define ABILITY_MAX_LEVEL	10  /* ê¸°ìˆ  ìµœëŒ€ ë ˆë²¨ */
 
 enum EAbilityDifficulty
 {
@@ -123,9 +127,9 @@ enum EAbilityDifficulty
 
 enum EAbilityCategory
 {
-	CATEGORY_PHYSICAL,	/* ½ÅÃ¼Àû ¾îºô¸®Æ¼ */
-	CATEGORY_MENTAL,	/* Á¤½ÅÀû ¾îºô¸®Æ¼ */
-	CATEGORY_ATTRIBUTE,	/* ´É·Â ¾îºô¸®Æ¼ */
+	CATEGORY_PHYSICAL,	/* ì‹ ì²´ì  ì–´ë¹Œë¦¬í‹° */
+	CATEGORY_MENTAL,	/* ì •ì‹ ì  ì–´ë¹Œë¦¬í‹° */
+	CATEGORY_ATTRIBUTE,	/* ëŠ¥ë ¥ ì–´ë¹Œë¦¬í‹° */
 	CATEGORY_NUM_TYPES
 };
 
@@ -195,13 +199,13 @@ enum EParts
 
 enum EChatType
 {
-	CHAT_TYPE_TALKING,	/* ±×³É Ã¤ÆÃ */
-	CHAT_TYPE_INFO,	/* Á¤º¸ (¾ÆÀÌÅÛÀ» Áý¾ú´Ù, °æÇèÄ¡¸¦ ¾ò¾ú´Ù. µî) */
-	CHAT_TYPE_NOTICE,	/* °øÁö»çÇ× */
-	CHAT_TYPE_PARTY,	/* ÆÄÆ¼¸» */
-	CHAT_TYPE_GUILD,	/* ±æµå¸» */
-	CHAT_TYPE_COMMAND,	/* ÀÏ¹Ý ¸í·É */
-	CHAT_TYPE_SHOUT,	/* ¿ÜÄ¡±â */
+	CHAT_TYPE_TALKING,	/* ê·¸ëƒ¥ ì±„íŒ… */
+	CHAT_TYPE_INFO,	/* ì •ë³´ (ì•„ì´í…œì„ ì§‘ì—ˆë‹¤, ê²½í—˜ì¹˜ë¥¼ ì–»ì—ˆë‹¤. ë“±) */
+	CHAT_TYPE_NOTICE,	/* ê³µì§€ì‚¬í•­ */
+	CHAT_TYPE_PARTY,	/* íŒŒí‹°ë§ */
+	CHAT_TYPE_GUILD,	/* ê¸¸ë“œë§ */
+	CHAT_TYPE_COMMAND,	/* ì¼ë°˜ ëª…ë ¹ */
+	CHAT_TYPE_SHOUT,	/* ì™¸ì¹˜ê¸° */
 	CHAT_TYPE_WHISPER,
 	CHAT_TYPE_BIG_NOTICE,
 	CHAT_TYPE_MAX_NUM
@@ -341,36 +345,36 @@ enum EApplyTypes
 	APPLY_ATTBONUS_SURA,	// 61
 	APPLY_ATTBONUS_SHAMAN,	// 62
 	APPLY_ATTBONUS_MONSTER,	// 63
-	APPLY_MALL_ATTBONUS,			// 64 °ø°Ý·Â +x%
-	APPLY_MALL_DEFBONUS,			// 65 ¹æ¾î·Â +x%
-	APPLY_MALL_EXPBONUS,			// 66 °æÇèÄ¡ +x%
-	APPLY_MALL_ITEMBONUS,			// 67 ¾ÆÀÌÅÛ µå·ÓÀ² x/10¹è
-	APPLY_MALL_GOLDBONUS,			// 68 µ· µå·ÓÀ² x/10¹è
-	APPLY_MAX_HP_PCT,				// 69 ÃÖ´ë »ý¸í·Â +x%
-	APPLY_MAX_SP_PCT,				// 70 ÃÖ´ë Á¤½Å·Â +x%
-	APPLY_SKILL_DAMAGE_BONUS,		// 71 ½ºÅ³ µ¥¹ÌÁö * (100+x)%
-	APPLY_NORMAL_HIT_DAMAGE_BONUS,	// 72 ÆòÅ¸ µ¥¹ÌÁö * (100+x)%
-	APPLY_SKILL_DEFEND_BONUS,		// 73 ½ºÅ³ µ¥¹ÌÁö ¹æ¾î * (100-x)%
-	APPLY_NORMAL_HIT_DEFEND_BONUS,	// 74 ÆòÅ¸ µ¥¹ÌÁö ¹æ¾î * (100-x)%
+	APPLY_MALL_ATTBONUS,			// 64 ê³µê²©ë ¥ +x%
+	APPLY_MALL_DEFBONUS,			// 65 ë°©ì–´ë ¥ +x%
+	APPLY_MALL_EXPBONUS,			// 66 ê²½í—˜ì¹˜ +x%
+	APPLY_MALL_ITEMBONUS,			// 67 ì•„ì´í…œ ë“œë¡­ìœ¨ x/10ë°°
+	APPLY_MALL_GOLDBONUS,			// 68 ëˆ ë“œë¡­ìœ¨ x/10ë°°
+	APPLY_MAX_HP_PCT,				// 69 ìµœëŒ€ ìƒëª…ë ¥ +x%
+	APPLY_MAX_SP_PCT,				// 70 ìµœëŒ€ ì •ì‹ ë ¥ +x%
+	APPLY_SKILL_DAMAGE_BONUS,		// 71 ìŠ¤í‚¬ ë°ë¯¸ì§€ * (100+x)%
+	APPLY_NORMAL_HIT_DAMAGE_BONUS,	// 72 í‰íƒ€ ë°ë¯¸ì§€ * (100+x)%
+	APPLY_SKILL_DEFEND_BONUS,		// 73 ìŠ¤í‚¬ ë°ë¯¸ì§€ ë°©ì–´ * (100-x)%
+	APPLY_NORMAL_HIT_DEFEND_BONUS,	// 74 í‰íƒ€ ë°ë¯¸ì§€ ë°©ì–´ * (100-x)%
 
-	APPLY_EXTRACT_HP_PCT,			// 77 »ç¿ë½Ã HP ¼Ò¸ð
+	APPLY_EXTRACT_HP_PCT,			// 77 ì‚¬ìš©ì‹œ HP ì†Œëª¨
 
-	APPLY_RESIST_WARRIOR,			// 78 ¹«»ç¿¡°Ô ÀúÇ×
-	APPLY_RESIST_ASSASSIN,			// 79 ÀÚ°´¿¡°Ô ÀúÇ×
-	APPLY_RESIST_SURA,				// 80 ¼ö¶ó¿¡°Ô ÀúÇ×
-	APPLY_RESIST_SHAMAN,			// 81 ¹«´ç¿¡°Ô ÀúÇ×
-	APPLY_ENERGY,					// 82 ±â·Â
-	APPLY_DEF_GRADE,				// 83 ¹æ¾î·Â. DEF_GRADE_BONUS´Â Å¬¶ó¿¡¼­ µÎ¹è·Î º¸¿©Áö´Â ÀÇµµµÈ ¹ö±×(...)°¡ ÀÖ´Ù.
-	APPLY_COSTUME_ATTR_BONUS,		// 84 ÄÚ½ºÆ¬ ¾ÆÀÌÅÛ¿¡ ºÙÀº ¼Ó¼ºÄ¡ º¸³Ê½º
-	APPLY_MAGIC_ATTBONUS_PER,		// 85 ¸¶¹ý °ø°Ý·Â +x%
-	APPLY_MELEE_MAGIC_ATTBONUS_PER,			// 86 ¸¶¹ý + ¹Ð¸® °ø°Ý·Â +x%
+	APPLY_RESIST_WARRIOR,			// 78 ë¬´ì‚¬ì—ê²Œ ì €í•­
+	APPLY_RESIST_ASSASSIN,			// 79 ìžê°ì—ê²Œ ì €í•­
+	APPLY_RESIST_SURA,				// 80 ìˆ˜ë¼ì—ê²Œ ì €í•­
+	APPLY_RESIST_SHAMAN,			// 81 ë¬´ë‹¹ì—ê²Œ ì €í•­
+	APPLY_ENERGY,					// 82 ê¸°ë ¥
+	APPLY_DEF_GRADE,				// 83 ë°©ì–´ë ¥. DEF_GRADE_BONUSëŠ” í´ë¼ì—ì„œ ë‘ë°°ë¡œ ë³´ì—¬ì§€ëŠ” ì˜ë„ëœ ë²„ê·¸(...)ê°€ ìžˆë‹¤.
+	APPLY_COSTUME_ATTR_BONUS,		// 84 ì½”ìŠ¤íŠ¬ ì•„ì´í…œì— ë¶™ì€ ì†ì„±ì¹˜ ë³´ë„ˆìŠ¤
+	APPLY_MAGIC_ATTBONUS_PER,		// 85 ë§ˆë²• ê³µê²©ë ¥ +x%
+	APPLY_MELEE_MAGIC_ATTBONUS_PER,			// 86 ë§ˆë²• + ë°€ë¦¬ ê³µê²©ë ¥ +x%
 	
-	APPLY_RESIST_ICE,		// 87 ³Ã±â ÀúÇ×
-	APPLY_RESIST_EARTH,		// 88 ´ëÁö ÀúÇ×
-	APPLY_RESIST_DARK,		// 89 ¾îµÒ ÀúÇ×
+	APPLY_RESIST_ICE,		// 87 ëƒ‰ê¸° ì €í•­
+	APPLY_RESIST_EARTH,		// 88 ëŒ€ì§€ ì €í•­
+	APPLY_RESIST_DARK,		// 89 ì–´ë‘  ì €í•­
 
-	APPLY_ANTI_CRITICAL_PCT,	//90 Å©¸®Æ¼ÄÃ ÀúÇ×
-	APPLY_ANTI_PENETRATE_PCT,	//91 °üÅëÅ¸°Ý ÀúÇ×
+	APPLY_ANTI_CRITICAL_PCT,	//90 í¬ë¦¬í‹°ì»¬ ì €í•­
+	APPLY_ANTI_PENETRATE_PCT,	//91 ê´€í†µíƒ€ê²© ì €í•­
 
 
 	MAX_APPLY_NUM,              // 
@@ -517,7 +521,7 @@ enum EGuildWarState
 	GUILD_WAR_OVER,
 	GUILD_WAR_RESERVE,
 
-	GUILD_WAR_DURATION = 30*60, // 1½Ã°£
+	GUILD_WAR_DURATION = 30*60, // 1ì‹œê°„
 	GUILD_WAR_WIN_POINT = 1000,
 	GUILD_WAR_LADDER_HALF_PENALTY_TIME = 12*60*60,
 };
@@ -561,13 +565,13 @@ enum EMoneyLogType
 
 enum EPremiumTypes
 {
-	PREMIUM_EXP,		// °æÇèÄ¡°¡ 1.2¹è
-	PREMIUM_ITEM,		// ¾ÆÀÌÅÛ µå·ÓÀ²ÀÌ 2¹è
-	PREMIUM_SAFEBOX,		// Ã¢°í°¡ 1Ä­¿¡¼­ 3Ä­
-	PREMIUM_AUTOLOOT,		// µ· ÀÚµ¿ ÁÝ±â
-	PREMIUM_FISH_MIND,		// °í±Þ ¹°°í±â ³¬ÀÏ È®·ü »ó½Â
-	PREMIUM_MARRIAGE_FAST,	// ±Ý½Ç Áõ°¡ ¾çÀ» ºü¸£°ÔÇÕ´Ï´Ù.
-	PREMIUM_GOLD,		// µ· µå·ÓÀ²ÀÌ 1.5¹è
+	PREMIUM_EXP,		// ê²½í—˜ì¹˜ê°€ 1.2ë°°
+	PREMIUM_ITEM,		// ì•„ì´í…œ ë“œë¡­ìœ¨ì´ 2ë°°
+	PREMIUM_SAFEBOX,		// ì°½ê³ ê°€ 1ì¹¸ì—ì„œ 3ì¹¸
+	PREMIUM_AUTOLOOT,		// ëˆ ìžë™ ì¤ê¸°
+	PREMIUM_FISH_MIND,		// ê³ ê¸‰ ë¬¼ê³ ê¸° ë‚šì¼ í™•ë¥  ìƒìŠ¹
+	PREMIUM_MARRIAGE_FAST,	// ê¸ˆì‹¤ ì¦ê°€ ì–‘ì„ ë¹ ë¥´ê²Œí•©ë‹ˆë‹¤.
+	PREMIUM_GOLD,		// ëˆ ë“œë¡­ìœ¨ì´ 1.5ë°°
 	PREMIUM_MAX_NUM = 9
 };
 
@@ -597,10 +601,10 @@ enum SPECIAL_EFFECT
 	SE_AUTO_HPUP,
 	SE_AUTO_SPUP,
 
-	SE_EQUIP_RAMADAN_RING,		// ¶ó¸¶´Ü ÃÊ½Â´ÞÀÇ ¹ÝÁö(71135) Âø¿ëÇÒ ¶§ ÀÌÆåÆ® (¹ßµ¿ÀÌÆåÆ®ÀÓ, Áö¼ÓÀÌÆåÆ® ¾Æ´Ô)
-	SE_EQUIP_HALLOWEEN_CANDY,		// ÇÒ·ÎÀ© »çÅÁÀ» Âø¿ë(-_-;)ÇÑ ¼ø°£¿¡ ¹ßµ¿ÇÏ´Â ÀÌÆåÆ®
-	SE_EQUIP_HAPPINESS_RING,		// Å©¸®½º¸¶½º Çàº¹ÀÇ ¹ÝÁö(71143) Âø¿ëÇÒ ¶§ ÀÌÆåÆ® (¹ßµ¿ÀÌÆåÆ®ÀÓ, Áö¼ÓÀÌÆåÆ® ¾Æ´Ô)
-	SE_EQUIP_LOVE_PENDANT,		// ¹ß·»Å¸ÀÎ »ç¶ûÀÇ ÆÒ´øÆ®(71145) Âø¿ëÇÒ ¶§ ÀÌÆåÆ® (¹ßµ¿ÀÌÆåÆ®ÀÓ, Áö¼ÓÀÌÆåÆ® ¾Æ´Ô)
+	SE_EQUIP_RAMADAN_RING,		// ë¼ë§ˆë‹¨ ì´ˆìŠ¹ë‹¬ì˜ ë°˜ì§€(71135) ì°©ìš©í•  ë•Œ ì´íŽ™íŠ¸ (ë°œë™ì´íŽ™íŠ¸ìž„, ì§€ì†ì´íŽ™íŠ¸ ì•„ë‹˜)
+	SE_EQUIP_HALLOWEEN_CANDY,		// í• ë¡œìœˆ ì‚¬íƒ•ì„ ì°©ìš©(-_-;)í•œ ìˆœê°„ì— ë°œë™í•˜ëŠ” ì´íŽ™íŠ¸
+	SE_EQUIP_HAPPINESS_RING,		// í¬ë¦¬ìŠ¤ë§ˆìŠ¤ í–‰ë³µì˜ ë°˜ì§€(71143) ì°©ìš©í•  ë•Œ ì´íŽ™íŠ¸ (ë°œë™ì´íŽ™íŠ¸ìž„, ì§€ì†ì´íŽ™íŠ¸ ì•„ë‹˜)
+	SE_EQUIP_LOVE_PENDANT,		// ë°œë Œíƒ€ì¸ ì‚¬ëž‘ì˜ íŒ¬ë˜íŠ¸(71145) ì°©ìš©í•  ë•Œ ì´íŽ™íŠ¸ (ë°œë™ì´íŽ™íŠ¸ìž„, ì§€ì†ì´íŽ™íŠ¸ ì•„ë‹˜)
 } ;
 
 enum ETeenFlags

@@ -3,6 +3,7 @@
 #define __INC_PEER_H__
 
 #include "PeerBase.h"
+#include "../common/length.h"
 
 class CPeer : public CPeerBase
 {
@@ -66,9 +67,9 @@ class CPeer : public CPeerBase
 	BYTE	m_bChannel;
 	DWORD	m_dwHandle;
 	DWORD	m_dwUserCount;
-	WORD	m_wListenPort;	// °ÔÀÓ¼­¹ö°¡ Å¬¶óÀÌ¾ğÆ®¸¦ À§ÇØ listen ÇÏ´Â Æ÷Æ®
-	WORD	m_wP2PPort;	// °ÔÀÓ¼­¹ö°¡ °ÔÀÓ¼­¹ö P2P Á¢¼ÓÀ» À§ÇØ listen ÇÏ´Â Æ÷Æ®
-	long	m_alMaps[32];	// ¾î¶² ¸ÊÀ» °üÀåÇÏ°í ÀÖ´Â°¡?
+	long	m_alMaps[MAP_ALLOW_LIMIT];	// î¶²  Ï° Ö´Â°?
+	WORD	m_wP2PPort;	// ê²Œì„ì„œë²„ê°€ ê²Œì„ì„œë²„ P2P ì ‘ì†ì„ ìœ„í•´ listen í•˜ëŠ” í¬íŠ¸
+	long	m_alMaps[32];	// ì–´ë–¤ ë§µì„ ê´€ì¥í•˜ê³  ìˆëŠ”ê°€?
 
 	TItemIDRangeTable m_itemRange;
 	TItemIDRangeTable m_itemSpareRange;
