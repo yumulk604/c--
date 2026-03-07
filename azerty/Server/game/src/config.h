@@ -1,6 +1,10 @@
 #ifndef __INC_METIN_II_GAME_CONFIG_H__
 #define __INC_METIN_II_GAME_CONFIG_H__
 
+#include <cstdint>
+
+#include "../../common/tables.h"
+
 enum
 {
 	ADDRESS_MAX_LEN = 15
@@ -30,7 +34,7 @@ extern bool	g_bTrafficProfileOn;
 extern BYTE	g_bChannel;
 
 extern bool	map_allow_find(int index);
-extern void	map_allow_copy(long * pl, int size);
+extern void	map_allow_copy(long * pl, uint64_t size);
 extern bool	no_wander;
 
 extern int	g_iUserLimit;
