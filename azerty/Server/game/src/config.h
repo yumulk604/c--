@@ -1,5 +1,6 @@
 #ifndef __INC_METIN_II_GAME_CONFIG_H__
 #define __INC_METIN_II_GAME_CONFIG_H__
+#include <vector>
 
 enum
 {
@@ -30,7 +31,7 @@ extern bool	g_bTrafficProfileOn;
 extern BYTE	g_bChannel;
 
 extern bool	map_allow_find(int index);
-extern void	map_allow_copy(long * pl, int size);
+extern void	map_allow_copy(std::vector<long>& out);
 extern bool	no_wander;
 
 extern int	g_iUserLimit;

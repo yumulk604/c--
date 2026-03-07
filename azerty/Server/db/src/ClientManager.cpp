@@ -1,4 +1,6 @@
 
+#include <algorithm>
+#include <climits>
 #include "stdafx.h"
 
 #include "../../common/billing.h"
@@ -141,7 +143,7 @@ void CClientManager::MainLoop()
 
 	sys_log(0, "ClientManager pointer is %p", this);
 
-	// ���η���
+	// ÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·ÃÂÃÂ§ÃÂÃÂÃÂÃÂ
 	while (!m_bShutdowned)
 	{
 		while ((tmp = CDBManager::instance().PopResult()))
@@ -157,7 +159,7 @@ void CClientManager::MainLoop()
 	}
 
 	//
-	// ���η��� ����ó��
+	// ÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·ÃÂÃÂ§ÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂ¾ÃÂÃÂ·ÃÂÃÂ¡ÃÂÃÂÃÂÃÂ³ÃÂÃÂ¸ÃÂÃÂ®
 	//
 	sys_log(0, "MainLoop exited, Starting cache flushing");
 
@@ -165,7 +167,8 @@ void CClientManager::MainLoop()
 
 	itertype(m_map_playerCache) it = m_map_playerCache.begin();
 
-	//�÷��̾� ���̺� ĳ�� �÷���	
+	//ÃÂÃÂÃÂÃÂÃÂÃÂ·ÃÂÃÂ¹ÃÂÃÂÃÂÃÂÃÂÃÂ¾ÃÂÃÂ® ÃÂ
+ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂºÃÂÃÂ­ ÃÂÃÂÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂ¬ ÃÂÃÂÃÂÃÂÃÂÃÂ·ÃÂÃÂ¯ÃÂÃÂ½ÃÂÃÂ¬	
 	while (it != m_map_playerCache.end())
 	{
 		CPlayerTableCache * c = (it++)->second;
@@ -177,7 +180,8 @@ void CClientManager::MainLoop()
 
 	
 	itertype(m_map_itemCache) it2 = m_map_itemCache.begin();
-	//������ �÷���
+	//ÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂ·ÃÂÃÂ¯ÃÂÃÂ½ÃÂÃÂ¬
 	while (it2 != m_map_itemCache.end())
 	{
 		CItemCache * c = (it2++)->second;
@@ -189,7 +193,8 @@ void CClientManager::MainLoop()
 
 	// MYSHOP_PRICE_LIST
 	//
-	// ���λ��� ������ ���� ����Ʈ Flush
+	// ÃÂÃÂ°ÃÂÃÂ³ÃÂÃÂÃÂÃÂÃÂÃÂ»ÃÂÃÂ³ÃÂÃÂÃÂÃÂ¡ ÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂ ÃÂÃÂ°ÃÂÃÂ¡ÃÂÃÂ°ÃÂÃÂ ÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂ½ÃÂÃÂºÃÂÃÂÃÂÃÂ® Flush
 	//
 	for (itertype(m_mapItemPriceListCache) itPriceList = m_mapItemPriceListCache.begin(); itPriceList != m_mapItemPriceListCache.end(); ++itPriceList)
 	{
@@ -209,7 +214,8 @@ void CClientManager::Quit()
 
 void CClientManager::QUERY_BOOT(CPeer* peer, TPacketGDBoot * p)
 {
-	const BYTE bPacketVersion = 6; // BOOT ��Ŷ�� �ٲ𶧸��� ��ȣ�� �ø����� �Ѵ�.
+	const BYTE bPacketVersion = 6; // BOOT ÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂ¶ÃÂÃÂÃÂÃÂ ÃÂÃÂ¹ÃÂÃÂÃÂÃÂ²ÃÂÃÂ°ÃÂÃÂ¶ÃÂÃÂ§ÃÂÃÂ¸ÃÂÃÂ¶ÃÂÃÂ´ÃÂÃÂ ÃÂÃÂ¹ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ£ÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂ¿ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂµÃÂÃÂµÃÂÃÂ·ÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ.
 
 	std::vector<tAdminInfo> vAdmin;
 	std::vector<std::string> vHost;
@@ -436,9 +442,10 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 	ClientHandleInfo * pi = (ClientHandleInfo *) qi->pvData;
 	DWORD dwHandle = pi->dwHandle;
 
-	// ���⿡�� ����ϴ� account_index�� ���� ������ ���Ѵ�.
-	// ù��° �н����� �˾Ƴ��� ���� �ϴ� ������ 0
-	// �ι�° ���� �����͸� ������ ������ 1
+	// ÃÂÃÂ¿ÃÂÃÂ©ÃÂÃÂ±ÃÂÃÂ¢ÃÂÃÂ¿ÃÂÃÂ¡ÃÂÃÂ¼ÃÂÃÂ­ ÃÂÃÂ»ÃÂÃÂ§ÃÂÃÂ¿ÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ account_indexÃÂÃÂ´ÃÂÃÂ ÃÂÃÂÃÂÃÂµÃÂÃÂ¸ÃÂÃÂ® ÃÂÃÂ¼ÃÂÃÂ¸ÃÂÃÂ¼ÃÂÃÂ­ÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂ¸ÃÂÃÂ»ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ.
+	// ÃÂÃÂÃÂÃÂ¹ÃÂÃÂ¹ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ° ÃÂÃÂÃÂÃÂÃÂÃÂ½ÃÂÃÂºÃÂÃÂ¿ÃÂÃÂ¶ÃÂÃÂµÃÂÃÂ¥ ÃÂÃÂ¾ÃÂÃÂÃÂÃÂ¾ÃÂÃÂÃÂÃÂ³ÃÂÃÂ»ÃÂÃÂ±ÃÂÃÂ¢ ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ ÃÂÃÂÃÂÃÂµÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂ°ÃÂÃÂ¡ 0
+	// ÃÂÃÂµÃÂÃÂÃÂÃÂ¹ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ° ÃÂÃÂ½ÃÂÃÂÃÂÃÂÃÂÃÂ¦ ÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂ¾ÃÂÃÂ²ÃÂÃÂ¾ÃÂÃÂ®ÃÂÃÂ³ÃÂÃÂµÃÂÃÂ´ÃÂÃÂ ÃÂÃÂÃÂÃÂµÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂ°ÃÂÃÂ¡ 1
 
 	if (pi->account_index == 0)
 	{
@@ -463,7 +470,7 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 		{
 			MYSQL_ROW row = mysql_fetch_row(res->pSQLResult);
 
-			// ��й�ȣ�� Ʋ����..
+			// ÃÂÃÂºÃÂÃÂ±ÃÂÃÂ¹ÃÂÃÂÃÂÃÂ¹ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ£ÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂ²ÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂ¸ÃÂÃÂ©..
 			if (((!row[2] || !*row[2]) && strcmp("000000", szSafeboxPassword)) ||
 				((row[2] && *row[2]) && strcmp(row[2], szSafeboxPassword)))
 			{
@@ -529,8 +536,8 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 		}
 
 
-		// ������ ������ �־����Ƿ� ������ ��� â���� ����ִ� �� ó��
-		// ���̱� ������ â���� �ƾ� �ȿ����°� ����
+		// ÃÂÃÂÃÂÃÂµÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂ¿ÃÂÃÂ¡ÃÂÃÂ·ÃÂÃÂ¯ÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂÃÂÃÂ¾ÃÂÃÂºÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¹ÃÂÃÂÃÂÃÂ·ÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ¤ÃÂÃÂÃÂÃÂ ÃÂÃÂ°ÃÂÃÂ¦ÃÂÃÂ¿ÃÂÃÂ¬ ÃÂÃÂÃÂÃÂ¢ÃÂÃÂ°ÃÂÃÂ­ÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂºÃÂÃÂ±ÃÂÃÂ¾ÃÂÃÂ®ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ ÃÂÃÂ°ÃÂÃÂ ÃÂÃÂÃÂÃÂ³ÃÂÃÂ·ÃÂÃÂ³
+		// ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂ±ÃÂÃÂ¢ ÃÂÃÂ¶ÃÂÃÂ§ÃÂÃÂ¹ÃÂÃÂ®ÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂ¢ÃÂÃÂ°ÃÂÃÂ­ÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂ¾ÃÂÃÂÃÂÃÂ¾ÃÂÃÂª ÃÂÃÂ¾ÃÂÃÂÃÂÃÂ¿ÃÂÃÂ­ÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂ´ÃÂÃÂÃÂÃÂ°ÃÂÃÂ ÃÂÃÂ³ÃÂÃÂªÃÂÃÂÃÂÃÂ½
 		if (!msg->Get()->pSQLResult)
 		{
 			sys_err("null safebox result");
@@ -633,8 +640,9 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 						{
 							case 72723: case 72724: case 72725: case 72726:
 							case 72727: case 72728: case 72729: case 72730:
-							// ���ù��������� ������ �ϴ� �� ��ġ��� ������...
-							// �׷��� �׳� �ϵ� �ڵ�. ���� ���ڿ� �ڵ����� �����۵�.
+							// ÃÂÃÂ¹ÃÂÃÂ«ÃÂÃÂ½ÃÂÃÂÃÂÃÂ¹ÃÂÃÂ«ÃÂÃÂ½ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¶ÃÂÃÂ¸ÃÂÃÂ¸ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¼ÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ¸ ÃÂÃÂ°ÃÂÃÂ ÃÂÃÂ°ÃÂÃÂ­ÃÂÃÂÃÂÃÂ¡ÃÂÃÂ±ÃÂÃÂ¢ÃÂÃÂ´ÃÂÃÂ ÃÂÃÂ¹ÃÂÃÂ«ÃÂÃÂ¼ÃÂÃÂ·ÃÂÃÂ°ÃÂÃÂ­...
+							// ÃÂÃÂ±ÃÂÃÂÃÂÃÂ·ÃÂÃÂ¡ÃÂÃÂ¼ÃÂÃÂ­ ÃÂÃÂ±ÃÂÃÂÃÂÃÂ³ÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂµÃÂÃÂ¥ ÃÂÃÂÃÂÃÂÃÂÃÂµÃÂÃÂ¹. ÃÂÃÂ¼ÃÂÃÂ±ÃÂÃÂ¹ÃÂÃÂ° ÃÂÃÂ»ÃÂÃÂ³ÃÂÃÂÃÂÃÂÃÂÃÂ¿ÃÂÃÂ« ÃÂÃÂÃÂÃÂÃÂÃÂµÃÂÃÂ¿ÃÂÃÂ¹ÃÂÃÂ°ÃÂÃÂ¾ÃÂÃÂ  ÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂÃÂÃÂµÃÂÃÂ©.
 							case 76004: case 76005: case 76021: case 76022:
 							case 79012: case 79013:
 								if (pItemAward->dwSocket2 == 0)
@@ -745,7 +753,7 @@ void CClientManager::RESULT_SAFEBOX_LOAD(CPeer * pkPeer, SQLMsg * msg)
 void CClientManager::QUERY_SAFEBOX_CHANGE_SIZE(CPeer * pkPeer, DWORD dwHandle, TSafeboxChangeSizePacket * p)
 {
 	ClientHandleInfo * pi = new ClientHandleInfo(dwHandle);
-	pi->account_index = p->bSize;	// account_index�� ������� �ӽ÷� ���
+	pi->account_index = p->bSize;	// account_indexÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂ»ÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ®ÃÂÃÂ·ÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂ½ÃÂÃÂÃÂÃÂ·ÃÂÃÂ ÃÂÃÂ»ÃÂÃÂ§ÃÂÃÂ¿ÃÂÃÂ«
 
 	char szQuery[QUERY_MAX_LEN];
 
@@ -833,7 +841,7 @@ void CClientManager::RESULT_PRICELIST_LOAD(CPeer* peer, SQLMsg* pMsg)
 	TItemPricelistReqInfo* pReqInfo = (TItemPricelistReqInfo*)static_cast<CQueryInfo*>(pMsg->pvUserData)->pvData;
 
 	//
-	// DB ���� �ε��� ������ Cache �� ����
+	// DB ÃÂÃÂ¿ÃÂÃÂ¡ÃÂÃÂ¼ÃÂÃÂ­ ÃÂÃÂ·ÃÂÃÂÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ¸ÃÂÃÂ¦ Cache ÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¥
 	//
 
 	TItemPriceListTable table;
@@ -852,7 +860,8 @@ void CClientManager::RESULT_PRICELIST_LOAD(CPeer* peer, SQLMsg* pMsg)
 	PutItemPriceListCache(&table);
 
 	//
-	// �ε��� �����͸� Game server �� ����
+	// ÃÂÃÂ·ÃÂÃÂÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂ ÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¦ Game server ÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂ¼ÃÂÃÂ¼ÃÂÃÂ
 	//
 
 	TPacketMyshopPricelistHeader header;
@@ -876,7 +885,7 @@ void CClientManager::RESULT_PRICELIST_LOAD_FOR_UPDATE(SQLMsg* pMsg)
 	TItemPriceListTable* pUpdateTable = (TItemPriceListTable*)static_cast<CQueryInfo*>(pMsg->pvUserData)->pvData;
 
 	//
-	// DB ���� �ε��� ������ Cache �� ����
+	// DB ÃÂÃÂ¿ÃÂÃÂ¡ÃÂÃÂ¼ÃÂÃÂ­ ÃÂÃÂ·ÃÂÃÂÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ¸ÃÂÃÂ¦ Cache ÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¥
 	//
 
 	TItemPriceListTable table;
@@ -938,18 +947,20 @@ void CClientManager::QUERY_EMPIRE_SELECT(CPeer * pkPeer, DWORD dwHandle, TEmpire
 			UINT g_start_map[4] =
 			{
 				0,  // reserved
-				1,  // �ż���
-				21, // õ����
-				41  // ���뱹
+				1,  // ÃÂÃÂ½ÃÂ
+ÃÂÃÂ¼ÃÂÃÂ¶ÃÂÃÂ±ÃÂÃÂ¹
+				21, // ÃÂÃÂÃÂÃÂµÃÂÃÂÃÂÃÂ¶ÃÂÃÂ±ÃÂÃÂ¹
+				41  // ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ³ÃÂÃÂ«ÃÂÃÂ±ÃÂÃÂ¹
 			};
 
 			// FIXME share with game
 			DWORD g_start_position[4][2]=
 			{
 				{      0,      0 },
-				{ 469300, 964200 }, // �ż���
-				{  55700, 157900 }, // õ����
-				{ 969600, 278400 }  // ���뱹
+				{ 469300, 964200 }, // ÃÂÃÂ½ÃÂ
+ÃÂÃÂ¼ÃÂÃÂ¶ÃÂÃÂ±ÃÂÃÂ¹
+				{  55700, 157900 }, // ÃÂÃÂÃÂÃÂµÃÂÃÂÃÂÃÂ¶ÃÂÃÂ±ÃÂÃÂ¹
+				{ 969600, 278400 }  // ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ³ÃÂÃÂ«ÃÂÃÂ±ÃÂÃÂ¹
 			};
 
 			for (int i = 0; i < 3; ++i)
@@ -978,215 +989,222 @@ void CClientManager::QUERY_EMPIRE_SELECT(CPeer * pkPeer, DWORD dwHandle, TEmpire
 	pkPeer->EncodeBYTE(p->bEmpire);
 }
 
-void CClientManager::QUERY_SETUP(CPeer * peer, DWORD dwHandle, const char * c_pData)
+
+void CClientManager::QUERY_SETUP(CPeer * peer, DWORD dwHandle, const char * c_pData, DWORD dwLength)
 {
-	TPacketGDSetup * p = (TPacketGDSetup *) c_pData;
-	c_pData += sizeof(TPacketGDSetup);
+        const TPacketGDSetup * p = reinterpret_cast<const TPacketGDSetup *>(c_pData);
 
-	if (p->bAuthServer)
-	{
-		sys_log(0, "AUTH_PEER ptr %p", peer);
+        if (dwLength < sizeof(TPacketGDSetup))
+                return;
 
-		m_pkAuthPeer = peer;
-		SendAllLoginToBilling();
-		return;
-	}
+        const char * mapDataStart = c_pData + sizeof(TPacketGDSetup);
+        size_t mapPayloadLength = dwLength - sizeof(TPacketGDSetup);
 
-	peer->SetPublicIP(p->szPublicIP);
-	peer->SetChannel(p->bChannel);
-	peer->SetListenPort(p->wListenPort);
-	peer->SetP2PPort(p->wP2PPort);
-	peer->SetMaps(p->alMaps);
+        size_t mapCountFromLength = mapPayloadLength / sizeof(long);
+        std::vector<long> vecMaps;
 
-	//
-	// � ���� � ������ �ִ��� ������
-	//
-	TMapLocation kMapLocations;
+        if (p->wMapCount && mapCountFromLength)
+        {
+                const long * mapPtr = reinterpret_cast<const long *>(mapDataStart);
+                size_t safeCount = std::min(static_cast<size_t>(p->wMapCount), mapCountFromLength);
+                vecMaps.assign(mapPtr, mapPtr + safeCount);
+        }
 
-	strlcpy(kMapLocations.szHost, peer->GetPublicIP(), sizeof(kMapLocations.szHost));
-	kMapLocations.wPort = peer->GetListenPort();
-	thecore_memcpy(kMapLocations.alMaps, peer->GetMaps(), sizeof(kMapLocations.alMaps));
+        const char * loginData = mapDataStart + vecMaps.size() * sizeof(long);
 
-	BYTE bMapCount;
+        if (p->bAuthServer)
+        {
+                sys_log(0, "AUTH_PEER ptr %p", peer);
 
-	std::vector<TMapLocation> vec_kMapLocations;
+                m_pkAuthPeer = peer;
+                SendAllLoginToBilling();
+                return;
+        }
 
-	if (peer->GetChannel() == 1)
-	{
-		for (itertype(m_peerList) i = m_peerList.begin(); i != m_peerList.end(); ++i)
-		{
-			CPeer * tmp = *i;
+        peer->SetPublicIP(p->szPublicIP);
+        peer->SetChannel(p->bChannel);
+        peer->SetListenPort(p->wListenPort);
+        peer->SetP2PPort(p->wP2PPort);
+        peer->SetMaps(vecMaps);
 
-			if (tmp == peer)
-				continue;
+        TMapLocation kMapLocations;
 
-			if (!tmp->GetChannel())
-				continue;
+        auto buildLocation = [](const CPeer * owner, TMapLocation & loc)
+        {
+                strlcpy(loc.szHost, owner->GetPublicIP(), sizeof(loc.szHost));
+                loc.wPort = owner->GetListenPort();
+                loc.wMapCount = owner->GetMaps().size();
+        };
 
-			if (tmp->GetChannel() == GUILD_WARP_WAR_CHANNEL || tmp->GetChannel() == peer->GetChannel())
-			{
-				TMapLocation kMapLocation2;
-				strlcpy(kMapLocation2.szHost, tmp->GetPublicIP(), sizeof(kMapLocation2.szHost));
-				kMapLocation2.wPort = tmp->GetListenPort();
-				thecore_memcpy(kMapLocation2.alMaps, tmp->GetMaps(), sizeof(kMapLocation2.alMaps));
-				vec_kMapLocations.push_back(kMapLocation2);
+        buildLocation(peer, kMapLocations);
 
-				tmp->EncodeHeader(HEADER_DG_MAP_LOCATIONS, 0, sizeof(BYTE) + sizeof(TMapLocation));
-				bMapCount = 1;
-				tmp->EncodeBYTE(bMapCount);
-				tmp->Encode(&kMapLocations, sizeof(TMapLocation));
-			}
-		}
-	}
-	else if (peer->GetChannel() == GUILD_WARP_WAR_CHANNEL)
-	{
-		for (itertype(m_peerList) i = m_peerList.begin(); i != m_peerList.end(); ++i)
-		{
-			CPeer * tmp = *i;
+        auto encodeLocation = [](CPeer * target, const TMapLocation & loc, const std::vector<long> & maps)
+        {
+                DWORD size = sizeof(BYTE) + sizeof(TMapLocation) + maps.size() * sizeof(long);
+                target->EncodeHeader(HEADER_DG_MAP_LOCATIONS, 0, size);
+                target->EncodeBYTE(1);
+                target->Encode(&loc, sizeof(TMapLocation));
 
-			if (tmp == peer)
-				continue;
+                if (!maps.empty())
+                        target->Encode(&maps[0], maps.size() * sizeof(long));
+        };
 
-			if (!tmp->GetChannel())
-				continue;
+        size_t deliveredToPeer = 0;
 
-			if (tmp->GetChannel() == 1 || tmp->GetChannel() == peer->GetChannel())
-			{
-				TMapLocation kMapLocation2;
-				strlcpy(kMapLocation2.szHost, tmp->GetPublicIP(), sizeof(kMapLocation2.szHost));
-				kMapLocation2.wPort = tmp->GetListenPort();
-				thecore_memcpy(kMapLocation2.alMaps, tmp->GetMaps(), sizeof(kMapLocation2.alMaps));
-				vec_kMapLocations.push_back(kMapLocation2);
-			}
+        if (peer->GetChannel() == 1)
+        {
+                for (itertype(m_peerList) i = m_peerList.begin(); i != m_peerList.end(); ++i)
+                {
+                        CPeer * tmp = *i;
 
-			tmp->EncodeHeader(HEADER_DG_MAP_LOCATIONS, 0, sizeof(BYTE) + sizeof(TMapLocation));
-			bMapCount = 1;
-			tmp->EncodeBYTE(bMapCount);
-			tmp->Encode(&kMapLocations, sizeof(TMapLocation));
-		}
-	}
-	else
-	{
-		for (itertype(m_peerList) i = m_peerList.begin(); i != m_peerList.end(); ++i)
-		{
-			CPeer * tmp = *i;
+                        if (tmp == peer)
+                                continue;
 
-			if (tmp == peer)
-				continue;
+                        if (!tmp->GetChannel())
+                                continue;
 
-			if (!tmp->GetChannel())
-				continue;
+                        if (tmp->GetChannel() == GUILD_WARP_WAR_CHANNEL || tmp->GetChannel() == peer->GetChannel())
+                        {
+                                TMapLocation kMapLocation2;
+                                buildLocation(tmp, kMapLocation2);
 
-			if (tmp->GetChannel() == GUILD_WARP_WAR_CHANNEL || tmp->GetChannel() == peer->GetChannel())
-			{
-				TMapLocation kMapLocation2;
+                                encodeLocation(tmp, kMapLocations, vecMaps);
+                                encodeLocation(peer, kMapLocation2, tmp->GetMaps());
+                                ++deliveredToPeer;
+                        }
+                }
+        }
+        else if (peer->GetChannel() == GUILD_WARP_WAR_CHANNEL)
+        {
+                for (itertype(m_peerList) i = m_peerList.begin(); i != m_peerList.end(); ++i)
+                {
+                        CPeer * tmp = *i;
 
-				strlcpy(kMapLocation2.szHost, tmp->GetPublicIP(), sizeof(kMapLocation2.szHost));
-				kMapLocation2.wPort = tmp->GetListenPort();
-				thecore_memcpy(kMapLocation2.alMaps, tmp->GetMaps(), sizeof(kMapLocation2.alMaps));
+                        if (tmp == peer)
+                                continue;
 
-				vec_kMapLocations.push_back(kMapLocation2);
-			}
+                        if (!tmp->GetChannel())
+                                continue;
 
-			if (tmp->GetChannel() == peer->GetChannel())
-			{
-				tmp->EncodeHeader(HEADER_DG_MAP_LOCATIONS, 0, sizeof(BYTE) + sizeof(TMapLocation));
-				bMapCount = 1;
-				tmp->EncodeBYTE(bMapCount);
-				tmp->Encode(&kMapLocations, sizeof(TMapLocation));
-			}
-		}
-	}
+                        if (tmp->GetChannel() == 1 || tmp->GetChannel() == peer->GetChannel())
+                        {
+                                TMapLocation kMapLocation2;
+                                buildLocation(tmp, kMapLocation2);
 
-	vec_kMapLocations.push_back(kMapLocations);
+                                encodeLocation(peer, kMapLocation2, tmp->GetMaps());
+                                ++deliveredToPeer;
+                        }
 
-	peer->EncodeHeader(HEADER_DG_MAP_LOCATIONS, 0, sizeof(BYTE) + sizeof(TMapLocation) * vec_kMapLocations.size());
-	bMapCount = vec_kMapLocations.size();
-	peer->EncodeBYTE(bMapCount);
-	peer->Encode(&vec_kMapLocations[0], sizeof(TMapLocation) * vec_kMapLocations.size());
+                        encodeLocation(tmp, kMapLocations, vecMaps);
+                }
+        }
+        else
+        {
+                for (itertype(m_peerList) i = m_peerList.begin(); i != m_peerList.end(); ++i)
+                {
+                        CPeer * tmp = *i;
 
-	//
-	// �¾� : ������ �Ǿ �ٸ� �Ǿ���� �����ϰ� �����. (P2P ���ؼ� ����)
-	// 
-	sys_log(0, "SETUP: channel %u listen %u p2p %u count %u", peer->GetChannel(), p->wListenPort, p->wP2PPort, bMapCount);
+                        if (tmp == peer)
+                                continue;
 
-	TPacketDGP2P p2pSetupPacket;
-	p2pSetupPacket.wPort = peer->GetP2PPort();
-	p2pSetupPacket.bChannel = peer->GetChannel();
-	strlcpy(p2pSetupPacket.szHost, peer->GetPublicIP(), sizeof(p2pSetupPacket.szHost));
+                        if (!tmp->GetChannel())
+                                continue;
 
-	for (itertype(m_peerList) i = m_peerList.begin(); i != m_peerList.end();++i)
-	{
-		CPeer * tmp = *i;
+                        if (tmp->GetChannel() == GUILD_WARP_WAR_CHANNEL || tmp->GetChannel() == peer->GetChannel())
+                        {
+                                TMapLocation kMapLocation2;
+                                buildLocation(tmp, kMapLocation2);
 
-		if (tmp == peer)
-			continue;
+                                encodeLocation(peer, kMapLocation2, tmp->GetMaps());
+                                ++deliveredToPeer;
+                        }
 
-		// ä���� 0�̶�� ���� SETUP ��Ŷ�� ���� ���� �Ǿ� �Ǵ� auth��� ������ �� ����
-		if (0 == tmp->GetChannel())
-			continue;
+                        if (tmp->GetChannel() == peer->GetChannel())
+                                encodeLocation(tmp, kMapLocations, vecMaps);
+                }
+        }
 
-		tmp->EncodeHeader(HEADER_DG_P2P, 0, sizeof(TPacketDGP2P));
-		tmp->Encode(&p2pSetupPacket, sizeof(TPacketDGP2P));
-	}
+        encodeLocation(peer, kMapLocations, vecMaps);
+        ++deliveredToPeer;
 
-	//
-	// �α��� �� �������� ������
-	//
-	TPacketLoginOnSetup * pck = (TPacketLoginOnSetup *) c_pData;;
-	std::vector<TPacketBillingRepair> vec_repair;
+        BYTE bMapCount = static_cast<BYTE>(std::min<size_t>(deliveredToPeer, UCHAR_MAX));
 
-	for (DWORD c = 0; c < p->dwLoginCount; ++c, ++pck)
-	{
-		CLoginData * pkLD = new CLoginData;
+        //
+        // ÃÂ¼ÃÂÃÂ¾ÃÂ· : ÃÂÃÂ¢ÃÂ¼ÃÂÃÂÃÂ ÃÂÃÂÃÂ¾ÃÂ®ÃÂ¿ÃÂ¡ ÃÂ´ÃÂÃÂ¸ÃÂ¥ ÃÂÃÂÃÂ¾ÃÂ®ÃÂµÃÂ©ÃÂÃÂ ÃÂÃÂ¢ÃÂ¼ÃÂÃÂÃÂÃÂ°ÃÂ ÃÂ¸ÃÂ¸ÃÂµÃÂ§ÃÂ´ÃÂ. (P2P ÃÂÃÂÃÂ³ÃÂÃÂ¼ÃÂ ÃÂ»ÃÂ½ÃÂ¼ÃÂº)
+        //
+        sys_log(0, "SETUP: channel %u listen %u p2p %u count %u", peer->GetChannel(), p->wListenPort, p->wP2PPort, bMapCount);
 
-		pkLD->SetKey(pck->dwLoginKey);
-		pkLD->SetClientKey(pck->adwClientKey);
-		pkLD->SetIP(pck->szHost);
+        TPacketDGP2P p2pSetupPacket;
+        p2pSetupPacket.wPort = peer->GetP2PPort();
+        p2pSetupPacket.bChannel = peer->GetChannel();
+        strlcpy(p2pSetupPacket.szHost, peer->GetPublicIP(), sizeof(p2pSetupPacket.szHost));
 
-		TAccountTable & r = pkLD->GetAccountRef();
+        for (itertype(m_peerList) i = m_peerList.begin(); i != m_peerList.end();++i)
+        {
+                CPeer * tmp = *i;
 
-		r.id = pck->dwID;
-		trim_and_lower(pck->szLogin, r.login, sizeof(r.login));
-		strlcpy(r.social_id, pck->szSocialID, sizeof(r.social_id));
-		strlcpy(r.passwd, "TEMP", sizeof(r.passwd));
+                if (tmp == peer)
+                        continue;
 
-		InsertLoginData(pkLD);
+                // ÃÂÃÂ¦ 0ÃÂÃÂÃÂ¸ÃÂ© SETUP Ã
+ÃÂ¥ÃÂ·ÃÂ¡ÃÂÃÂÃÂ¾ÃÂ®ÃÂ¸ÃÂ¦ ÃÂºÃÂ¸ÃÂ³ÃÂ»ÃÂÃÂ¶ ÃÂ¾ÃÂÃÂ´ÃÂ auth
+                if (0 == tmp->GetChannel())
+                        continue;
 
-		if (InsertLogonAccount(pck->szLogin, peer->GetHandle(), pck->szHost))
-		{
-			sys_log(0, "SETUP: login %u %s login_key %u host %s", pck->dwID, pck->szLogin, pck->dwLoginKey, pck->szHost);
-			pkLD->SetPlay(true);
+                tmp->EncodeHeader(HEADER_DG_P2P, 0, sizeof(TPacketDGP2P));
+                tmp->Encode(&p2pSetupPacket, sizeof(TPacketDGP2P));
+        }
 
-			if (m_pkAuthPeer)
-			{
-				TPacketBillingRepair pck_repair;
-				pck_repair.dwLoginKey = pkLD->GetKey();
-				strlcpy(pck_repair.szLogin, pck->szLogin, sizeof(pck_repair.szLogin));
-				strlcpy(pck_repair.szHost, pck->szHost, sizeof(pck_repair.szHost));
-				vec_repair.push_back(pck_repair);
-			}
-		}
-		else
-			sys_log(0, "SETUP: login_fail %u %s login_key %u", pck->dwID, pck->szLogin, pck->dwLoginKey);
-	}
+        //
+        // ÃÂÃÂ§ÃÂ¿ÃÂ¸ÃÂÃÂ ÃÂµÃÂ®ÃÂ·ÃÂ
+        //
+        TPacketLoginOnSetup * pck = (TPacketLoginOnSetup *) loginData;;
+        std::vector<TPacketBillingRepair> vec_repair;
 
-	if (m_pkAuthPeer && !vec_repair.empty())
-	{
-		sys_log(0, "REPAIR size %d", vec_repair.size());
+        for (DWORD c = 0; c < p->dwLoginCount; ++c, ++pck)
+        {
+                CLoginData * pkLD = new CLoginData;
 
-		m_pkAuthPeer->EncodeHeader(HEADER_DG_BILLING_REPAIR, 0, sizeof(DWORD) + sizeof(TPacketBillingRepair) * vec_repair.size());
-		m_pkAuthPeer->EncodeDWORD(vec_repair.size());
-		m_pkAuthPeer->Encode(&vec_repair[0], sizeof(TPacketBillingRepair) * vec_repair.size());
-	}
+                pkLD->SetKey(pck->dwLoginKey);
+                pkLD->SetClientKey(pck->adwClientKey);
+                pkLD->SetIP(pck->szHost);
 
-	SendPartyOnSetup(peer);
-	CGuildManager::instance().OnSetup(peer);
-	CPrivManager::instance().SendPrivOnSetup(peer);
-	SendEventFlagsOnSetup(peer);
-	marriage::CManager::instance().OnSetup(peer);
+                TAccountTable & r = pkLD->GetAccountRef();
+
+                r.id = pck->dwID;
+                trim_and_lower(pck->szLogin, r.login, sizeof(r.login));
+                strlcpy(r.social_id, pck->szSocialID, sizeof(r.social_id));
+                strlcpy(r.passwd, "TEMP", sizeof(r.passwd));
+
+                InsertLoginData(pkLD);
+
+                if (InsertLogonAccount(pck->szLogin, peer->GetHandle(), pck->szHost))
+                {
+                        sys_log(0, "SETUP: login %u %s login_key %u host %s", pck->dwID, pck->szLogin, pck->dwLoginKey, pck->szHost);
+                        pkLD->SetPlay(true);
+
+                        if (m_pkAuthPeer)
+                        {
+                                TPacketBillingRepair pck_repair;
+                                pck_repair.dwLoginKey = pkLD->GetKey();
+                                strlcpy(pck_repair.szLogin, pck->szLogin, sizeof(pck_repair.szLogin));
+                                strlcpy(pck_repair.szHost, pck->szHost, sizeof(pck_repair.szHost));
+                                vec_repair.push_back(pck_repair);
+                        }
+                }
+                else
+                        sys_log(0, "SETUP: login_fail %u %s login_key %u", pck->dwID, pck->szLogin, pck->dwLoginKey);
+        }
+
+        if (m_pkAuthPeer && !vec_repair.empty())
+        {
+                sys_log(0, "REPAIR size %d", vec_repair.size());
+
+                m_pkAuthPeer->EncodeHeader(HEADER_DG_BILLING_REPAIR, 0, sizeof(DWORD) + sizeof(TPacketBillingRepair) * vec_repair.size());
+                m_pkAuthPeer->EncodeDWORD(vec_repair.size());
+                m_pkAuthPeer->Encode(&vec_repair[0], sizeof(TPacketBillingRepair) * vec_repair.size());
+        }
 }
-
 void CClientManager::QUERY_ITEM_FLUSH(CPeer * pkPeer, const char * c_pData)
 {
 	DWORD dwID = *(DWORD *) c_pData;
@@ -1323,7 +1341,8 @@ void CClientManager::PutItemCache(TPlayerItem * pNew, bool bSkipQuery)
 
 	c = GetItemCache(pNew->id);
 	
-	// ������ ���� ����
+	// ÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂ ÃÂÃÂ»ÃÂÃÂµÃÂÃÂ·ÃÂÃÂ ÃÂÃÂ»ÃÂÃÂ½ÃÂÃÂ¼ÃÂÃÂº
 	if (!c)
 	{
 		if (g_log)
@@ -1332,15 +1351,18 @@ void CClientManager::PutItemCache(TPlayerItem * pNew, bool bSkipQuery)
 		c = new CItemCache;
 		m_map_itemCache.insert(TItemCacheMap::value_type(pNew->id, c));
 	}
-	// ������
+	// ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ»ÃÂÃÂ½ÃÂÃÂ
 	else
 	{
 		if (g_log)
 			sys_log(0, "ITEM_CACHE: PutItemCache ==> Have Cache");
-		// �����ڰ� Ʋ����
+		// ÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂ²ÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂ¸ÃÂÃÂ©
 		if (pNew->owner != c->Get()->owner)
 		{
-			// �̹� �� �������� ������ �־��� ������ ���� �������� �����Ѵ�.
+			// ÃÂÃÂÃÂÃÂÃÂÃÂ¹ÃÂÃÂ ÃÂÃÂÃÂÃÂ ÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂÃÂÃÂÃÂÃÂ» ÃÂÃÂ°ÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¶ÃÂÃÂ°ÃÂÃÂ­ ÃÂÃÂÃÂÃÂÃÂÃÂ¾ÃÂÃÂºÃÂÃÂ´ÃÂÃÂ¸ ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂºÃÂÃÂ·ÃÂÃÂ ÃÂÃÂºÃÂÃÂÃÂ
+ÃÂÃÂ ÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂÃÂÃÂÃÂÃÂ» ÃÂÃÂ»ÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ.
 			TItemCacheSetPtrMap::iterator it = m_map_pkItemCacheSetPtr.find(c->Get()->owner);
 
 			if (it != m_map_pkItemCacheSetPtr.end())
@@ -1352,7 +1374,7 @@ void CClientManager::PutItemCache(TPlayerItem * pNew, bool bSkipQuery)
 		}
 	}
 
-	// ���ο� ���� ������Ʈ 
+	// ÃÂÃÂ»ÃÂÃÂµÃÂÃÂ·ÃÂÃÂÃÂÃÂ¿ÃÂÃÂ® ÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ ÃÂÃÂ¾ÃÂÃÂ·ÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ® 
 	c->Put(pNew, bSkipQuery);
 	
 	TItemCacheSetPtrMap::iterator it = m_map_pkItemCacheSetPtr.find(c->Get()->owner);
@@ -1367,8 +1389,8 @@ void CClientManager::PutItemCache(TPlayerItem * pNew, bool bSkipQuery)
 	}
 	else
 	{
-		// ���� �����ڰ� �����Ƿ� �ٷ� �����ؾ� ���� ������ �� �� SQL�� �����Ͽ�
-		// ���� �� �����Ƿ� �ٷ� �����Ѵ�.
+		// ÃÂÃÂÃÂÃÂ¶ÃÂÃÂÃÂÃÂ§ ÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂ¾ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¹ÃÂÃÂÃÂÃÂ·ÃÂÃÂ ÃÂÃÂ¹ÃÂÃÂÃÂÃÂ·ÃÂÃÂ ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂ¾ÃÂÃÂ ÃÂÃÂ´ÃÂÃÂÃÂÃÂÃÂÃÂ½ ÃÂÃÂÃÂÃÂ¢ÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂ ÃÂÃÂ¿ÃÂÃÂ ÃÂÃÂ¶ÃÂÃÂ§ SQLÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂµÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂÃÂÃÂÃÂÃÂ¿ÃÂÃÂ©
+		// ÃÂÃÂ¹ÃÂÃÂÃÂÃÂÃÂÃÂ» ÃÂÃÂ¼ÃÂÃÂ¶ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¹ÃÂÃÂÃÂÃÂ·ÃÂÃÂ ÃÂÃÂ¹ÃÂÃÂÃÂÃÂ·ÃÂÃÂ ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ.
 		if (g_log)
 			sys_log(0, "ITEM_CACHE: direct save %u id %u", c->Get()->owner, c->Get()->id);
 		else
@@ -1428,7 +1450,7 @@ void CClientManager::UpdatePlayerCache()
 
 			c->Flush();
 
-			// Item Cache�� ������Ʈ
+			// Item CacheÃÂÃÂµÃÂÃÂµ ÃÂÃÂ¾ÃÂÃÂ·ÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ®
 			UpdateItemCacheSet(c->Get()->id);
 		}
 		else if (c->CheckFlushTimeout())
@@ -1454,7 +1476,8 @@ void CClientManager::UpdateItemCache()
 	{
 		CItemCache * c = (it++)->second;
 
-		// �������� Flush�� �Ѵ�.
+		// ÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂÃÂÃÂÃÂÃÂº FlushÃÂÃÂ¸ÃÂÃÂ¸ ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ.
 		if (c->CheckFlushTimeout())
 		{
 			c->Flush();
@@ -1498,7 +1521,7 @@ void CClientManager::QUERY_ITEM_DESTROY(CPeer * pkPeer, const char * c_pData)
 		if (g_log)
 			sys_log(0, "HEADER_GD_ITEM_DESTROY: PID %u ID %u", dwPID, dwID);
 
-		if (dwPID == 0) // �ƹ��� ���� ����� �����ٸ�, �񵿱� ����
+		if (dwPID == 0) // ÃÂÃÂ¾ÃÂÃÂÃÂÃÂ¹ÃÂÃÂ«ÃÂÃÂµÃÂÃÂµ ÃÂÃÂ°ÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¸ ÃÂÃÂ»ÃÂÃÂ§ÃÂÃÂ¶ÃÂÃÂ·ÃÂÃÂÃÂÃÂ ÃÂÃÂ¾ÃÂÃÂ¸ÃÂÃÂ¾ÃÂÃÂºÃÂÃÂ´ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ©, ÃÂÃÂºÃÂÃÂ±ÃÂÃÂµÃÂÃÂ¿ÃÂÃÂ±ÃÂÃÂ¢ ÃÂÃÂÃÂÃÂµÃÂÃÂ¸ÃÂÃÂ®
 			CDBManager::instance().AsyncQuery(szQuery);
 		else
 			CDBManager::instance().ReturnQuery(szQuery, QID_ITEM_DESTROY, pkPeer->GetHandle(), NULL);
@@ -1560,7 +1583,7 @@ void CClientManager::QUERY_RELOAD_PROTO()
 
 // ADD_GUILD_PRIV_TIME
 /**
- * @version	05/06/08 Bang2ni - ���ӽð� �߰�
+ * @version	05/06/08 Bang2ni - ÃÂÃÂÃÂÃÂ¶ÃÂÃÂ¼ÃÂÃÂÃÂÃÂ½ÃÂÃÂÃÂÃÂ°ÃÂÃÂ£ ÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂ¡
  */
 void CClientManager::AddGuildPriv(TPacketGiveGuildPriv* p)
 {
@@ -2014,8 +2037,9 @@ void CClientManager::WeddingEnd(TPacketWeddingEnd * p)
 }
 
 //
-// ĳ�ÿ� ���������� ������ ĳ�ø� ������Ʈ �ϰ� ĳ�ÿ� ���������� ���ٸ�
-// �켱 ������ �����͸� �ε��� �ڿ� ������ ������ ĳ�ø� ����� ���� ���� ���������� ������Ʈ �Ѵ�.
+// ÃÂÃÂÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂ°ÃÂÃÂ¡ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¸ÃÂÃÂ© ÃÂÃÂÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂ¾ÃÂÃÂ·ÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ® ÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂ­ ÃÂÃÂÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂ°ÃÂÃÂ¡ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂ¾ÃÂÃÂ¸ÃÂÃÂ´ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ©
+// ÃÂÃÂ¿ÃÂÃÂ¬ÃÂÃÂ¼ÃÂÃÂ± ÃÂÃÂ±ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ ÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂ·ÃÂÃÂÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂ ÃÂÃÂµÃÂÃÂÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂ±ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ·ÃÂÃÂ ÃÂÃÂÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂ¸ÃÂÃÂ¸ÃÂÃÂµÃÂÃÂ©ÃÂÃÂ°ÃÂÃÂ­ ÃÂÃÂ»ÃÂÃÂµÃÂÃÂ·ÃÂÃÂ ÃÂÃÂ¹ÃÂÃÂÃÂÃÂÃÂÃÂº ÃÂÃÂ°ÃÂÃÂ¡ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂ¾ÃÂÃÂ·ÃÂÃÂµÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ® ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ.
 //
 void CClientManager::MyshopPricelistUpdate(const TPacketMyshopPricelistHeader* pPacket)
 {
@@ -2056,7 +2080,7 @@ void CClientManager::MyshopPricelistUpdate(const TPacketMyshopPricelistHeader* p
 }
 
 // MYSHOP_PRICE_LIST
-// ĳ�õ� ���������� ������ ĳ�ø� �о� �ٷ� �����ϰ� ĳ�ÿ� ������ ������ DB �� ������ �Ѵ�.
+// ÃÂÃÂÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂÃÂÃÂµÃÂÃÂ ÃÂÃÂ°ÃÂÃÂ¡ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¸ÃÂÃÂ© ÃÂÃÂÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂÃÂÃÂÃÂÃÂ¾ÃÂÃÂ® ÃÂÃÂ¹ÃÂÃÂÃÂÃÂ·ÃÂÃÂ ÃÂÃÂÃÂÃÂ¼ÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂ­ ÃÂÃÂÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ°ÃÂÃÂ¡ ÃÂÃÂ¾ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¸ÃÂÃÂ© DB ÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂµÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ.
 //
 void CClientManager::MyshopPricelistRequest(CPeer* peer, DWORD dwHandle, DWORD dwPlayerID)
 {
@@ -2202,7 +2226,7 @@ void CClientManager::ProcessPackets(CPeer * peer)
 				break;
 
 			case HEADER_GD_SETUP:
-				QUERY_SETUP(peer, dwHandle, data);
+				QUERY_SETUP(peer, dwHandle, data, dwLength);
 				break;
 
 			case HEADER_GD_GUILD_CREATE:
@@ -2549,9 +2573,11 @@ CPeer * CClientManager::GetAnyPeer()
 	return m_peerList.front();
 }
 
-// DB �Ŵ����� ���� ���� ����� ó���Ѵ�.
+// DB ÃÂÃÂ¸ÃÂ
+ÃÂÃÂ´ÃÂÃÂÃÂÃÂÃÂÃÂºÃÂÃÂ·ÃÂÃÂ ÃÂÃÂºÃÂÃÂÃÂ
+ÃÂÃÂ ÃÂÃÂ¹ÃÂÃÂÃÂÃÂÃÂÃÂº ÃÂÃÂ°ÃÂÃÂ¡ÃÂÃÂ°ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂÃÂÃÂ³ÃÂÃÂ¸ÃÂÃÂ®ÃÂÃÂÃÂÃÂÃÂÃÂ´ÃÂÃÂ.
 //
-// @version	05/06/10 Bang2ni - �������� ���� ����(QID_ITEMPRICE_XXX) �߰�
+// @version	05/06/10 Bang2ni - ÃÂÃÂ°ÃÂÃÂ¡ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂºÃÂÃÂ¸ ÃÂÃÂ°ÃÂÃÂ¼ÃÂÃÂ·ÃÂÃÂ ÃÂÃÂÃÂÃÂµÃÂÃÂ¸ÃÂÃÂ®(QID_ITEMPRICE_XXX) ÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂ¡
 int CClientManager::AnalyzeQueryResult(SQLMsg * msg)
 {
 	CQueryInfo * qi = (CQueryInfo *) msg->pvUserData;
@@ -2665,7 +2691,7 @@ void UsageLog()
 	char        *time_s;
 	struct tm   lt;
 
-	int         avg = g_dwUsageAvg / 3600; // 60 �� * 60 ��
+	int         avg = g_dwUsageAvg / 3600; // 60 ÃÂÃÂÃÂÃÂ * 60 ÃÂÃÂºÃÂÃÂ
 
 	fp = fopen("usage.txt", "a+");
 
@@ -2698,7 +2724,7 @@ int CClientManager::Process()
 		++thecore_heart->pulse;
 
 		/*
-		//30�и��� ����
+		//30ÃÂÃÂºÃÂÃÂÃÂÃÂ¸ÃÂÃÂ¶ÃÂÃÂ´ÃÂÃÂ ÃÂÃÂºÃÂÃÂ¯ÃÂÃÂ°ÃÂÃÂ¦
 		if (((thecore_pulse() % (60 * 30 * 10)) == 0))
 		{
 			g_iPlayerCacheFlushSeconds = MAX(60, rand() % 180);
@@ -2745,11 +2771,12 @@ int CClientManager::Process()
 			m_iCacheFlushCount = 0;
 
 
-			//�÷��̾� �÷���
+			//ÃÂÃÂÃÂÃÂÃÂÃÂ·ÃÂÃÂ¹ÃÂÃÂÃÂÃÂÃÂÃÂ¾ÃÂÃÂ® ÃÂÃÂÃÂÃÂÃÂÃÂ·ÃÂÃÂ¯ÃÂÃÂ½ÃÂÃÂ¬
 			UpdatePlayerCache();
-			//������ �÷���
+			//ÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂ·ÃÂÃÂ¯ÃÂÃÂ½ÃÂÃÂ¬
 			UpdateItemCache();
-			//�α׾ƿ��� ó��- ĳ���� �÷���
+			//ÃÂÃÂ·ÃÂÃÂÃÂÃÂ±ÃÂÃÂÃÂÃÂ¾ÃÂÃÂÃÂÃÂ¿ÃÂÃÂ´ÃÂÃÂ½ÃÂÃÂ ÃÂÃÂÃÂÃÂ³ÃÂÃÂ¸ÃÂÃÂ®- ÃÂÃÂÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂ¬ÃÂÃÂ¼ÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂ·ÃÂÃÂ¯ÃÂÃÂ½ÃÂÃÂ¬
 			UpdateLogoutPlayer();
 
 			// MYSHOP_PRICE_LIST
@@ -2819,13 +2846,15 @@ int CClientManager::Process()
 			/////////////////////////////////////////////////////////////////
 		}
 
-		if (!(thecore_heart->pulse % (thecore_heart->passes_per_sec * 60)))	// 60�ʿ� �ѹ�
+		if (!(thecore_heart->pulse % (thecore_heart->passes_per_sec * 60)))	// 60ÃÂÃÂÃÂÃÂÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂÃÂÃÂ¹ÃÂÃÂ¸
 		{
-			// ����ũ �������� ���� �ð��� ������.
+			// ÃÂÃÂÃÂÃÂ¯ÃÂÃÂ´ÃÂÃÂÃÂ
+ÃÂÃÂ© ÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+ÃÂÃÂÃÂÃÂÃÂÃÂ» ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ ÃÂÃÂ½ÃÂÃÂÃÂÃÂ°ÃÂÃÂ£ÃÂÃÂÃÂÃÂ» ÃÂÃÂºÃÂÃÂ¸ÃÂÃÂ³ÃÂÃÂ½ÃÂÃÂ´ÃÂÃÂ.
 			CClientManager::instance().SendTime();
 		}
 
-		if (!(thecore_heart->pulse % (thecore_heart->passes_per_sec * 3600)))	// �ѽð��� �ѹ�
+		if (!(thecore_heart->pulse % (thecore_heart->passes_per_sec * 3600)))	// ÃÂÃÂÃÂÃÂÃÂÃÂ½ÃÂÃÂÃÂÃÂ°ÃÂÃÂ£ÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂÃÂÃÂÃÂÃÂ¹ÃÂÃÂ¸
 		{
 			CMoneyLog::instance().Save();
 		}
@@ -2835,7 +2864,7 @@ int CClientManager::Process()
 	int idx;
 	CPeer * peer;
 
-	for (idx = 0; idx < num_events; ++idx) // ��ǲ
+	for (idx = 0; idx < num_events; ++idx) // ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²
 	{
 		peer = (CPeer *) fdwatch_get_client_data(m_fdWatcher, idx);
 
@@ -2901,7 +2930,7 @@ int CClientManager::Process()
 
 DWORD CClientManager::GetUserCount()
 {
-	// �ܼ��� �α��� ī��Ʈ�� ����.. --;
+	// ÃÂÃÂ´ÃÂÃÂÃÂÃÂ¼ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ· ÃÂÃÂ·ÃÂÃÂÃÂÃÂ±ÃÂÃÂÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂ«ÃÂÃÂ¿ÃÂÃÂ®ÃÂÃÂÃÂÃÂ®ÃÂÃÂ¸ÃÂÃÂ¦ ÃÂÃÂ¼ÃÂÃÂ¾ÃÂÃÂ´ÃÂÃÂ.. --;
 	return m_map_kLogonAccount.size();
 }
 
@@ -3047,7 +3076,7 @@ bool CClientManager::InitializeLocalization()
 
 bool CClientManager::__GetAdminInfo(const char *szIP, std::vector<tAdminInfo> & rAdminVec)
 {
-	//szIP == NULL �ϰ��  ��缭���� ��� ������ ���´�.
+	//szIP == NULL ÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂ¦ÃÂÃÂ¿ÃÂÃÂ¬  ÃÂÃÂ¸ÃÂÃÂ°ÃÂÃÂµÃÂÃÂ§ÃÂÃÂ¼ÃÂÃÂ­ÃÂÃÂ¹ÃÂÃÂ¶ÃÂÃÂ¿ÃÂÃÂ¡ ÃÂÃÂ¿ÃÂÃÂ®ÃÂÃÂ¿ÃÂÃÂµÃÂÃÂÃÂÃÂ ÃÂÃÂ±ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ» ÃÂÃÂ°ÃÂÃÂ®ÃÂÃÂ´ÃÂÃÂÃÂÃÂ´ÃÂÃÂ.
 	char szQuery[512];
 	snprintf(szQuery, sizeof(szQuery),
 			"SELECT mID,mAccount,mName,mContactIP,mServerIP,mAuthority FROM gmlist WHERE mServerIP='ALL' or mServerIP='%s'",
@@ -3247,7 +3276,7 @@ void CClientManager::SendSpareItemIDRange(CPeer* peer)
 }
 
 //
-// Login Key�� �ʿ��� �����.
+// Login KeyÃÂÃÂ¸ÃÂÃÂ¸ ÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¿ÃÂÃÂ¡ÃÂÃÂ¼ÃÂÃÂ­ ÃÂÃÂÃÂÃÂ¶ÃÂÃÂ¿ÃÂÃÂ®ÃÂÃÂ´ÃÂÃÂ.
 // 
 void CClientManager::DeleteLoginKey(TPacketDC *data)
 {

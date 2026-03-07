@@ -11,7 +11,7 @@ CPeer::CPeer()
 	m_wListenPort = 0;
 	m_wP2PPort = 0;
 
-	memset(m_alMaps, 0, sizeof(m_alMaps));
+	m_vecMaps.clear();
 
 	m_itemRange.dwMin = m_itemRange.dwMax = m_itemRange.dwUsableItemIDMin = 0;
 	m_itemSpareRange.dwMin = m_itemSpareRange.dwMax = m_itemSpareRange.dwUsableItemIDMin = 0;
@@ -127,9 +127,9 @@ void CPeer::SetP2PPort(WORD wPort)
 	m_wP2PPort = wPort;
 }
 
-void CPeer::SetMaps(long * pl)
+void CPeer::SetMaps(const std::vector<long>& maps)
 {
-	thecore_memcpy(m_alMaps, pl, sizeof(m_alMaps));
+	m_vecMaps = maps;
 }
 
 void CPeer::SendSpareItemIDRange()

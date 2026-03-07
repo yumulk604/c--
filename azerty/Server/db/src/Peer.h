@@ -2,6 +2,7 @@
 #ifndef __INC_PEER_H__
 #define __INC_PEER_H__
 
+#include <vector>
 #include "PeerBase.h"
 
 class CPeer : public CPeerBase
@@ -52,8 +53,8 @@ class CPeer : public CPeerBase
 	void	SetP2PPort(WORD wPort);
 	WORD	GetP2PPort() { return m_wP2PPort; }
 
-	void	SetMaps(long* pl);
-	long *	GetMaps() { return &m_alMaps[0]; }
+        void    SetMaps(const std::vector<long>& maps);
+        const std::vector<long>& GetMaps() const { return m_vecMaps; }
 
 	bool	SetItemIDRange(TItemIDRangeTable itemRange);
 	bool	SetSpareItemIDRange(TItemIDRangeTable itemRange);
@@ -66,9 +67,10 @@ class CPeer : public CPeerBase
 	BYTE	m_bChannel;
 	DWORD	m_dwHandle;
 	DWORD	m_dwUserCount;
-	WORD	m_wListenPort;	// ���Ӽ����� Ŭ���̾�Ʈ�� ���� listen �ϴ� ��Ʈ
-	WORD	m_wP2PPort;	// ���Ӽ����� ���Ӽ��� P2P ������ ���� listen �ϴ� ��Ʈ
-	long	m_alMaps[32];	// � ���� �����ϰ� �ִ°�?
+	WORD	m_wListenPort;	// ÃÂ°ÃÂÃÂÃÂÃÂ¼ÃÂ­ÃÂ¹ÃÂ¶ÃÂ°ÃÂ¡ Ã
+ÃÂ¬ÃÂ¶ÃÂ³ÃÂÃÂÃÂ¾ÃÂ°ÃÂÃÂ®ÃÂ¸ÃÂ¦ ÃÂÃÂ§ÃÂÃÂ listen ÃÂÃÂÃÂ´ÃÂ ÃÂÃÂ·ÃÂÃÂ®
+	WORD	m_wP2PPort;	// ÃÂ°ÃÂÃÂÃÂÃÂ¼ÃÂ­ÃÂ¹ÃÂ¶ÃÂ°ÃÂ¡ ÃÂ°ÃÂÃÂÃÂÃÂ¼ÃÂ­ÃÂ¹ÃÂ¶ P2P ÃÂÃÂ¢ÃÂ¼ÃÂÃÂÃÂ» ÃÂÃÂ§ÃÂÃÂ listen ÃÂÃÂÃÂ´ÃÂ ÃÂÃÂ·ÃÂÃÂ®
+        std::vector<long> m_vecMaps;
 
 	TItemIDRangeTable m_itemRange;
 	TItemIDRangeTable m_itemSpareRange;
