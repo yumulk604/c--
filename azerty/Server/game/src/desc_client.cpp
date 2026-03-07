@@ -75,7 +75,7 @@ bool CLIENT_DESC::Connect(int iPhaseWhenSucceed)
 	if (iPhaseWhenSucceed != 0)
 		m_iPhaseWhenSucceed = iPhaseWhenSucceed;
 
-	if (get_global_time() - m_LastTryToConnectTime < 3)	// 3√ 
+	if (get_global_time() - m_LastTryToConnectTime < 3)	// 3√É√ä
 		return false;
 
 	m_LastTryToConnectTime = get_global_time();
@@ -151,11 +151,14 @@ void CLIENT_DESC::SetPhase(int iPhase)
 
 				if (!g_bAuthServer)
 				{
-					p.bChannel	= g_bChannel;
+					p.bChannel      = g_bChannel;
 					p.wListenPort = mother_port;
-					p.wP2PPort	= p2p_port;
+					p.wP2PPort      = p2p_port;
 					p.bAuthServer = false;
-					map_allow_copy(p.alMaps, 32);
+
+					std::vector<long> allowedMaps;
+					map_allow_copy(allowedMaps);
+					p.wMapCount = allowedMaps.size();
 
 					const DESC_MANAGER::DESC_SET & c_set = DESC_MANAGER::instance().GetClientSet();
 					DESC_MANAGER::DESC_SET::const_iterator it;
@@ -169,6 +172,9 @@ void CLIENT_DESC::SetPhase(int iPhase)
 					}
 
 					buf.write(&p, sizeof(p));
+
+					if (!allowedMaps.empty())
+						buf.write(&allowedMaps[0], allowedMaps.size() * sizeof(long));
 
 					if (p.dwLoginCount)
 					{
@@ -198,14 +204,12 @@ void CLIENT_DESC::SetPhase(int iPhase)
 
 					sys_log(0, "DB_SETUP current user %d size %d", p.dwLoginCount, buf.size());
 
-					// ∆ƒ∆º∏¶ √≥∏Æ«“ ºˆ ¿÷∞‘ µ .
-					CPartyManager::instance().EnablePCParty();
-					//CPartyManager::instance().SendPartyToDB();
 				}
 				else
 				{
 					p.bAuthServer = true;
 					buf.write(&p, sizeof(p));
+				}
 				}
 
 				DBPacket(HEADER_GD_SETUP, 0, buf.read_peek(), buf.size());
@@ -278,7 +282,7 @@ void CLIENT_DESC::Update(DWORD t)
 void CLIENT_DESC::UpdateChannelStatus(DWORD t, bool fForce)
 {
 	enum {
-		CHANNELSTATUS_UPDATE_PERIOD = 5*60*1000,	// 5∫–∏∂¥Ÿ
+		CHANNELSTATUS_UPDATE_PERIOD = 5*60*1000,	// 5¬∫√ê¬∏¬∂¬¥√ô
 	};
 	if (fForce || static_cast<unsigned long>(m_tLastChannelStatusUpdateTime+CHANNELSTATUS_UPDATE_PERIOD) < t) {
 		int iTotal; 

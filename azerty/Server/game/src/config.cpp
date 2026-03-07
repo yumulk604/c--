@@ -132,19 +132,9 @@ void map_allow_add(int index)
 	s_set_map_allows.insert(index);
 }
 
-void map_allow_copy(long * pl, int size)
+void map_allow_copy(std::vector<long>& out)
 {
-	int iCount = 0;
-	std::set<int>::iterator it = s_set_map_allows.begin();
-
-	while (it != s_set_map_allows.end())
-	{
-		int i = *(it++);
-		*(pl++) = i;
-
-		if (++iCount > size)
-			break;
-	}
+	out.assign(s_set_map_allows.begin(), s_set_map_allows.end());
 }
 
 bool GetIPInfo()
@@ -378,7 +368,7 @@ void config_init(const string& st_localeServiceName)
 		exit(1);
 	}
 
-	// Common DB °¡ Locale Á¤º¸¸¦ °¡Áö°í ÀÖ±â ¶§¹®¿¡ °¡Àå ¸ÕÀú Á¢¼ÓÇØ¾ß ÇÑ´Ù.
+	// Common DB Â°Â¡ Locale ÃÂ¤ÂºÂ¸Â¸Â¦ Â°Â¡ÃÃ¶Â°Ã­ Ã€Ã–Â±Ã¢ Â¶Â§Â¹Â®Â¿Â¡ Â°Â¡Ã€Ã¥ Â¸Ã•Ã€Ãº ÃÂ¢Â¼Ã“Ã‡Ã˜Â¾ÃŸ Ã‡Ã‘Â´Ã™.
 	AccountDB::instance().Connect(db_host[1], mysql_db_port[1], db_user[1], db_pwd[1], db_db[1]);
 
 	if (false == AccountDB::instance().IsConnected())
@@ -389,8 +379,8 @@ void config_init(const string& st_localeServiceName)
 
 	fprintf(stdout, "CommonSQL connected\n");
 
-	// ·ÎÄÉÀÏ Á¤º¸¸¦ °¡Á®¿ÀÀÚ 
-	// <°æ°í> Äõ¸®¹®¿¡ Àı´ë Á¶°Ç¹®(WHERE) ´ŞÁö ¸¶¼¼¿ä. (´Ù¸¥ Áö¿ª¿¡¼­ ¹®Á¦°¡ »ı±æ¼ö ÀÖ½À´Ï´Ù)
+	// Â·ÃÃ„Ã‰Ã€Ã ÃÂ¤ÂºÂ¸Â¸Â¦ Â°Â¡ÃÂ®Â¿Ã€Ã€Ãš 
+	// <Â°Ã¦Â°Ã­> Ã„ÃµÂ¸Â®Â¹Â®Â¿Â¡ Ã€Ã½Â´Ã« ÃÂ¶Â°Ã‡Â¹Â®(WHERE) Â´ÃÃÃ¶ Â¸Â¶Â¼Â¼Â¿Ã¤. (Â´Ã™Â¸Â¥ ÃÃ¶Â¿ÂªÂ¿Â¡Â¼Â­ Â¹Â®ÃÂ¦Â°Â¡ Â»Ã½Â±Ã¦Â¼Ã¶ Ã€Ã–Â½Ã€Â´ÃÂ´Ã™)
 	{
 		char szQuery[512];
 		snprintf(szQuery, sizeof(szQuery), "SELECT mKey, mValue FROM locale");
@@ -407,7 +397,7 @@ void config_init(const string& st_localeServiceName)
 
 		while (NULL != (row = mysql_fetch_row(pMsg->Get()->pSQLResult)))
 		{
-			// ·ÎÄÉÀÏ ¼¼ÆÃ
+			// Â·ÃÃ„Ã‰Ã€Ã Â¼Â¼Ã†Ãƒ
 			if (strcasecmp(row[0], "LOCALE") == 0)
 			{
 				if (LocaleService_Init(row[1]) == false)
@@ -425,7 +415,7 @@ void config_init(const string& st_localeServiceName)
 
 	AccountDB::instance().ConnectAsync(db_host[1], mysql_db_port[1], db_user[1], db_pwd[1], db_db[1], g_stLocale.c_str());
 
-	// Player DB Á¢¼Ó
+	// Player DB ÃÂ¢Â¼Ã“
 	DBManager::instance().Connect(db_host[0], mysql_db_port[0], db_user[0], db_pwd[0], db_db[0]);
 
 	if (!DBManager::instance().IsConnected())
@@ -491,13 +481,13 @@ void config_init(const string& st_localeServiceName)
 			}
 		}
 
-		// Á¾Á·º° ½ºÅ³ ¼¼ÆÃ
+		// ÃÂ¾ÃÂ·ÂºÂ° Â½ÂºÃ…Â³ Â¼Â¼Ã†Ãƒ
 		for (int job = 0; job < JOB_MAX_NUM * 2; ++job)
 		{
 			snprintf(szQuery, sizeof(szQuery), "SELECT mValue from locale where mKey='SKILL_POWER_BY_LEVEL_TYPE%d' ORDER BY CAST(mValue AS unsigned)", job);
 			std::auto_ptr<SQLMsg> pMsg(AccountDB::instance().DirectQuery(szQuery));
 
-			// ¼¼ÆÃÀÌ ¾ÈµÇ¾îÀÖÀ¸¸é ±âº»Å×ÀÌºíÀ» »ç¿ëÇÑ´Ù.
+			// Â¼Â¼Ã†ÃƒÃ€ÃŒ Â¾ÃˆÂµÃ‡Â¾Ã®Ã€Ã–Ã€Â¸Â¸Ã© Â±Ã¢ÂºÂ»Ã…Ã—Ã€ÃŒÂºÃ­Ã€Â» Â»Ã§Â¿Ã«Ã‡Ã‘Â´Ã™.
 			if (pMsg->Get()->uiNumRows == 0)
 			{
 				CTableBySkill::instance().SetSkillPowerByLevelFromType(job, aiBaseSkillPowerByLevelTable);
@@ -836,7 +826,7 @@ void CheckClientVersion()
 
 		if (version != date)
 		{
-			d->GetCharacter()->ChatPacket(CHAT_TYPE_NOTICE, "Versiunea clientului nu este compatibilã.");
+			d->GetCharacter()->ChatPacket(CHAT_TYPE_NOTICE, "Versiunea clientului nu este compatibilÃ£.");
 			d->DelayedDisconnect(10);
 		}
 	}
